@@ -808,8 +808,48 @@
         }
 
         /* ─── RESPONSIVE ─────────────────────────────── */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            line-height: 1;
+            transition: all 0.2s;
+        }
+        .menu-toggle:hover { border-color: var(--purple); color: var(--purple-light); }
+
+        nav.open .nav-links {
+            display: flex !important;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(8, 8, 15, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 0;
+            z-index: 99;
+        }
+        nav.open .nav-links li { border-bottom: 1px solid var(--border); }
+        nav.open .nav-links li:last-child { border-bottom: none; }
+        nav.open .nav-links li a {
+            display: block;
+            padding: 14px 24px;
+            font-size: 1rem;
+            color: var(--text-dim);
+        }
+        nav.open .nav-links li a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+
         @media (max-width: 768px) {
             nav { padding: 0 16px; }
+            .menu-toggle { display: block; }
             .nav-links { display: none; }
 
             .hero { padding: 80px 20px 60px; }
@@ -843,6 +883,7 @@
             <li><a href="#papers">Papers</a></li>
             <li><a href="https://github.com/ssfdre38/grey-liquid-labs" class="nav-cta">GitHub →</a></li>
         </ul>
+        <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
     </nav>
 
     <!-- HERO -->
@@ -1312,6 +1353,31 @@
             <p style="margin-top:6px;font-size:0.78rem;color:var(--text-muted);">"Breaking barriers through systematic research."</p>
         </div>
     </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navEl = document.querySelector('nav');
+        if (menuToggle && navEl) {
+            menuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navEl.classList.toggle('open');
+                menuToggle.textContent = navEl.classList.contains('open') ? '✕' : '☰';
+            });
+            document.addEventListener('click', (e) => {
+                if (!navEl.contains(e.target)) {
+                    navEl.classList.remove('open');
+                    menuToggle.textContent = '☰';
+                }
+            });
+            // Close on nav link click
+            navEl.querySelectorAll('a[href^="#"]').forEach(a => {
+                a.addEventListener('click', () => {
+                    navEl.classList.remove('open');
+                    menuToggle.textContent = '☰';
+                });
+            });
+        }
+    </script>
 
 </body>
 </html>
