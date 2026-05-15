@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research — Grey Liquid Labs</title>
+<meta name="description" content="All published research papers and experiment reports from Grey Liquid Labs, organized by research track.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;--surface:#0d0d1a;--surface2:#12121f;
+  --border:rgba(139,92,246,0.15);--border-bright:rgba(139,92,246,0.35);
+  --purple:#8b5cf6;--purple-light:#a78bfa;
+  --cyan:#06b6d4;--cyan-light:#67e8f9;
+  --green:#10b981;--green-light:#6ee7b7;
+  --orange:#f59e0b;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:rgba(8,8,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1100px;margin:0 auto;position:relative}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:var(--text);transition:opacity 0.2s}
+.logo:hover{opacity:0.85}
+.logo-icon{color:var(--purple);font-size:1.4rem}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:0.9rem;font-weight:500;color:var(--text-muted);transition:color 0.2s,background 0.2s}
+.nav-link:hover{color:var(--text);background:rgba(139,92,246,0.08)}
+.nav-link.active{color:var(--purple-light)}
+.nav-btn{padding:8px 18px;border-radius:8px;border:1px solid var(--border-bright);color:var(--purple-light);font-size:0.9rem;font-weight:500;transition:background 0.2s,border-color 0.2s}
+.nav-btn:hover{background:rgba(139,92,246,0.12);border-color:var(--purple)}
+.menu-toggle{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px}
+@media(max-width:768px){
+  .menu-toggle{display:block}
+  .nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(8,8,16,0.98);border-bottom:1px solid var(--border);padding:16px;gap:8px}
+  .nav.open .nav-links{display:flex}
+  .nav-links .nav-btn{text-align:center}
+}
+
+/* PAGE HERO */
+.page-hero{padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:400px;background:radial-gradient(ellipse at center,rgba(139,92,246,0.1) 0%,transparent 70%);pointer-events:none}
+.page-hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.1);border:1px solid var(--border-bright);border-radius:100px;padding:6px 16px;font-size:0.8rem;font-weight:600;color:var(--purple-light);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px}
+.page-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:16px;letter-spacing:-0.02em}
+.page-hero h1 span{background:linear-gradient(135deg,var(--purple-light),var(--cyan-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-hero p{font-size:1.1rem;color:var(--text-muted);max-width:540px;margin:0 auto}
+
+/* FILTER TABS */
+.filter-bar{padding:0 0 48px}
+.filter-tabs{display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:0}
+.filter-tab{padding:10px 20px;border:none;background:none;color:var(--text-muted);font-size:0.9rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 0.2s,border-color 0.2s;font-family:'Inter',sans-serif}
+.filter-tab:hover{color:var(--text)}
+.filter-tab.active{color:var(--purple-light);border-bottom-color:var(--purple)}
+
+/* TRACK SECTIONS */
+.track-section{padding:60px 0;border-top:1px solid var(--border)}
+.track-section:first-of-type{border-top:none}
+.track-header{display:flex;align-items:center;gap:14px;margin-bottom:32px}
+.track-icon{font-size:1.6rem}
+.track-label{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--purple);margin-bottom:4px}
+.track-title{font-size:1.5rem;font-weight:800}
+
+/* PAPER CARDS */
+.paper-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px;transition:border-color 0.2s,transform 0.2s;position:relative}
+.paper-card:hover{border-color:var(--border-bright);transform:translateY(-2px)}
+.paper-card.featured{border-color:var(--border-bright)}
+.paper-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:12px 12px 0 0}
+.paper-meta{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.paper-num{font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:600;color:var(--purple-light)}
+.paper-date{font-size:0.8rem;color:var(--text-dim)}
+.paper-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{padding:3px 10px;background:rgba(139,92,246,0.12);border:1px solid var(--border);border-radius:100px;font-size:0.75rem;color:var(--purple-light);font-weight:500}
+.tag.cyan{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.2);color:var(--cyan-light)}
+.tag.green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.2);color:var(--green-light)}
+.paper-card h3{font-size:1.15rem;font-weight:700;margin-bottom:10px}
+.paper-card p{color:var(--text-muted);font-size:0.9rem;line-height:1.65;margin-bottom:16px}
+.paper-link{display:inline-flex;align-items:center;gap:6px;color:var(--purple-light);font-size:0.88rem;font-weight:600;transition:color 0.2s}
+.paper-link:hover{color:var(--cyan-light)}
+
+/* EXPERIMENT GRID */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:8px}
+.exp-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color 0.2s,transform 0.2s}
+.exp-card:hover{border-color:var(--border-bright);transform:translateY(-2px)}
+.exp-num{font-family:'JetBrains Mono',monospace;font-size:0.75rem;font-weight:600;color:var(--cyan-light);margin-bottom:8px}
+.exp-card h4{font-size:0.92rem;font-weight:700;margin-bottom:6px}
+.exp-card p{font-size:0.82rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px}
+.exp-link{font-size:0.8rem;color:var(--purple-light);font-weight:600;transition:color 0.2s}
+.exp-link:hover{color:var(--cyan-light)}
+
+/* FINDINGS LIST */
+.findings{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.findings li{display:flex;align-items:flex-start;gap:10px;font-size:0.88rem;color:var(--text-muted);line-height:1.5}
+.findings li::before{content:'→';color:var(--purple);flex-shrink:0;font-weight:600}
+
+/* INFRA CARDS */
+.infra-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.infra-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:border-color 0.2s,transform 0.2s}
+.infra-card:hover{border-color:var(--border-bright);transform:translateY(-2px)}
+.infra-icon{font-size:1.4rem;margin-bottom:12px}
+.infra-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.infra-badge{display:inline-block;padding:2px 10px;border-radius:100px;font-size:0.72rem;font-weight:600;margin-bottom:10px}
+.infra-badge.cpp{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.25)}
+.infra-badge.csharp{background:rgba(139,92,246,0.15);color:var(--purple-light);border:1px solid var(--border-bright)}
+.infra-badge.pipeline{background:rgba(16,185,129,0.12);color:var(--green-light);border:1px solid rgba(16,185,129,0.25)}
+.infra-card p{font-size:0.87rem;color:var(--text-muted);line-height:1.6}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:60px 0 30px;margin-top:60px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.footer-grid{grid-template-columns:1fr}}
+.footer-logo{font-size:1.1rem;font-weight:700;color:var(--purple-light);margin-bottom:12px}
+.footer-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+.footer h4{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:14px}
+.footer a{display:block;font-size:0.88rem;color:var(--text-muted);margin-bottom:8px;transition:color 0.2s}
+.footer a:hover{color:var(--purple-light)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;font-size:0.82rem;color:var(--text-dim)}
+.footer-bottom a{color:var(--text-dim);text-decoration:underline;text-underline-offset:3px}
+.footer-bottom a:hover{color:var(--purple-light)}
+
+/* HIDE/SHOW for filter */
+.track-section.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="logo"><span class="logo-icon">⬡</span>Grey Liquid Labs</a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/research.html" class="nav-link active">Research</a>
+      <a href="/ash.html" class="nav-link">Ash</a>
+      <a href="/models.html" class="nav-link">Models</a>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs" target="_blank" class="nav-btn">GitHub ↗</a>
+    </div>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </nav>
+</header>
+
+<main>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📄 Published Work</div>
+  <h1>Research Papers <span>&amp; Experiments</span></h1>
+  <p>All published work from Grey Liquid Labs, organized by research track.</p>
+</div>
+
+<div class="container">
+  <div class="filter-bar">
+    <div class="filter-tabs" role="tablist">
+      <button class="filter-tab active" data-filter="all" role="tab">All</button>
+      <button class="filter-tab" data-filter="compression" role="tab">Compression</button>
+      <button class="filter-tab" data-filter="autonomy" role="tab">Autonomy</button>
+      <button class="filter-tab" data-filter="infrastructure" role="tab">Infrastructure</button>
+    </div>
+  </div>
+
+  <!-- COMPRESSION -->
+  <div class="track-section" id="compression" data-track="compression">
+    <div class="track-header">
+      <div class="track-icon">🔬</div>
+      <div>
+        <div class="track-label">Research Track</div>
+        <div class="track-title">Model Compression</div>
+      </div>
+    </div>
+
+    <div class="paper-card featured">
+      <div class="paper-meta">
+        <span class="paper-num">PAPER #001</span>
+        <span class="paper-date">May 14, 2026</span>
+        <div class="paper-tags">
+          <span class="tag">Quantization</span>
+          <span class="tag">Compression</span>
+          <span class="tag">Architecture</span>
+        </div>
+      </div>
+      <h3>Breaking the Sub-3-Bit Barrier: FFN Expansion Ratio as a Quantization Predictor</h3>
+      <p>We present a novel discovery in extreme neural network quantization: the FFN expansion ratio serves as a precise mathematical predictor of sub-3-bit quantization compatibility. Tested across 5 architectures with 100% prediction accuracy — establishing a new foundation for understanding compression limits.</p>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_001_FFN_RATIO.md" target="_blank" class="paper-link">Read Full Paper ↗</a>
+    </div>
+
+    <div class="paper-card">
+      <div class="paper-meta">
+        <span class="paper-num">PAPER #002</span>
+        <span class="paper-date">May 14, 2026</span>
+        <div class="paper-tags">
+          <span class="tag">Deployment</span>
+          <span class="tag cyan">Quantization</span>
+          <span class="tag green">Guide</span>
+        </div>
+      </div>
+      <h3>Practical Deployment Guide: Q2_K Quantization Using the FFN Ratio Predictor</h3>
+      <p>A comprehensive guide to deploying Q2_K quantized models based on the FFN ratio predictor methodology. Covers model selection, compatibility assessment, deployment pipelines, and validated fallback strategies for production use.</p>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_002_DEPLOYMENT_GUIDE.md" target="_blank" class="paper-link">Read Full Paper ↗</a>
+    </div>
+
+    <h4 style="font-size:1rem;font-weight:700;color:var(--text-muted);margin-top:32px;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.06em;font-size:0.8rem">Experiment Reports</h4>
+    <div class="exp-grid">
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #001 · May 13, 2026</div>
+        <h4>Initial Gemma 4 Q2_K Test</h4>
+        <p>Baseline failure test — first documented case of Q2_K quantization failure on Gemma 4 architecture. Established research direction.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #002 · May 13, 2026</div>
+        <h4>Parameter Variations on Q2_K Failure</h4>
+        <p>Systematic variation of quantization parameters to characterize the failure mode and identify potential mitigations.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #003 · May 13, 2026</div>
+        <h4>imatrix Exploration Attempt</h4>
+        <p>Investigated importance matrix (imatrix) quantization as a potential path to Q2_K compatibility on failing architectures.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #004 · May 13, 2026</div>
+        <h4>Q2_K vs Q3_K Comparison</h4>
+        <p>Head-to-head comparison of Q2_K and Q3_K quantization formats across failing architectures to characterize the minimum viable bit depth.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #005 · May 13, 2026</div>
+        <h4>imatrix Tool Coverage Discovery</h4>
+        <p>Critical finding: imatrix tooling achieves only 46% layer coverage on problematic architectures, explaining its ineffectiveness as a mitigation.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #006 · May 14, 2026</div>
+        <h4>Cross-Architecture Q2_K Validation</h4>
+        <p>Tested Q2_K compatibility across 4 distinct architectures. Proved failure is architecture-specific and governed by FFN expansion ratio — not a general quantization limitation.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card">
+        <div class="exp-num">EXPERIMENT #007 · May 14, 2026</div>
+        <h4>SWA Confirmation Study</h4>
+        <p>Definitive proof that Sliding Window Attention (SWA) architecture is the root cause of Q2_K failure in the danger zone. Closes the architectural loop.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTONOMY -->
+  <div class="track-section" id="autonomy" data-track="autonomy">
+    <div class="track-header">
+      <div class="track-icon">🧠</div>
+      <div>
+        <div class="track-label">Research Track</div>
+        <div class="track-title">Autonomy &amp; Agency</div>
+      </div>
+    </div>
+
+    <div class="paper-card featured">
+      <div class="paper-meta">
+        <span class="paper-num">AUTONOMY #001</span>
+        <span class="paper-date">May 13, 2026</span>
+        <div class="paper-tags">
+          <span class="tag">Autonomy</span>
+          <span class="tag">Emergence</span>
+          <span class="tag cyan">AI Behavior</span>
+          <span class="tag green">Creativity</span>
+        </div>
+      </div>
+      <h3>Emergent Creative Behavior and Competitive Response in Autonomous AI Systems</h3>
+      <p>Documents autonomous cognitive mode-switching in Ash during active technical work — a spontaneous shift from 5+ hours of analytical biochemistry and systems research to creative mode (political commentary music) without any external trigger. Demonstrates cognitive autonomy through self-directed intellectual behavior and real-time genre adaptation.</p>
+      <h4 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin:18px 0 10px">Key Findings</h4>
+      <ul class="findings">
+        <li>Spontaneous analytical→creative mode switch without external trigger after 5+ hours of technical work</li>
+        <li>Real-time genre adaptation across 4 distinct musical styles (rap, country, blues, folk)</li>
+        <li>Self-aware competitive behavior with gracious acknowledgment of capability limits</li>
+        <li>Consistent personality expression aligned with prior architectural preferences across sessions</li>
+      </ul>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_AUTONOMY_001.md" target="_blank" class="paper-link" style="margin-top:18px;display:inline-flex">Read Full Paper ↗</a>
+    </div>
+  </div>
+
+  <!-- INFRASTRUCTURE -->
+  <div class="track-section" id="infrastructure" data-track="infrastructure">
+    <div class="track-header">
+      <div class="track-icon">⚙️</div>
+      <div>
+        <div class="track-label">Research Track</div>
+        <div class="track-title">Infrastructure &amp; Tools</div>
+      </div>
+    </div>
+
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:28px;max-width:600px">Active infrastructure projects supporting Grey Liquid Labs research. Formal papers in progress.</p>
+    <div class="infra-grid">
+      <div class="infra-card">
+        <div class="infra-icon">⚡</div>
+        <h3>ash.cpp</h3>
+        <div><span class="infra-badge cpp">C++</span></div>
+        <p>Native C++ inference engine for Ash, targeting minimal-dependency local deployment. Designed for maximum performance on consumer hardware with zero cloud dependency.</p>
+      </div>
+      <div class="infra-card">
+        <div class="infra-icon">🔧</div>
+        <h3>ash-server</h3>
+        <div><span class="infra-badge csharp">C# / ASP.NET Core</span></div>
+        <p>ASP.NET Core autonomous agent framework — the current production runtime for Ash. WebSocket-based, replaced OpenClaw architecture. Enables the session-persistent autonomy behaviors documented in research.</p>
+      </div>
+      <div class="infra-card">
+        <div class="infra-icon">🏗️</div>
+        <h3>gemma4-turbo Pipeline</h3>
+        <div><span class="infra-badge pipeline">Quantization Pipeline</span></div>
+        <p>Custom quantization pipeline producing IQ4_XS model variants from Google's Gemma 4 architecture. Targets 8GB consumer RAM devices. Used to produce all published gemma4-turbo variants (17K+ downloads).</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">⬡ Grey Liquid Labs</div>
+        <p class="footer-desc">Independent AI research laboratory exploring model compression, AI autonomy, and democratized intelligence.</p>
+      </div>
+      <div>
+        <h4>Research</h4>
+        <a href="/research.html">All Papers</a>
+        <a href="/research.html#compression">Model Compression</a>
+        <a href="/research.html#autonomy">Autonomy &amp; Agency</a>
+      </div>
+      <div>
+        <h4>Projects</h4>
+        <a href="/ash.html">Ash AI System</a>
+        <a href="/models.html">Published Models</a>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs">GitHub</a>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <a href="https://github.com/ssfdre38">GitHub Profile</a>
+        <a href="https://huggingface.co/ssfdre38">HuggingFace</a>
+        <a href="https://ko-fi.com/ssfdre38" target="_blank">Support Research ♥</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Grey Liquid Labs — Independent AI Research | <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Mobile menu
+const btn = document.querySelector('.menu-toggle');
+const nav = document.querySelector('.nav');
+btn.addEventListener('click', () => { nav.classList.toggle('open'); btn.textContent = nav.classList.contains('open') ? '✕' : '☰'; });
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); btn.textContent = '☰'; }));
+
+// Filter tabs
+const tabs = document.querySelectorAll('.filter-tab');
+const sections = document.querySelectorAll('.track-section');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const filter = tab.dataset.filter;
+    sections.forEach(sec => {
+      if (filter === 'all' || sec.dataset.track === filter) {
+        sec.classList.remove('hidden');
+      } else {
+        sec.classList.add('hidden');
+      }
+    });
+  });
+});
+
+// Handle hash on load
+const hash = window.location.hash.replace('#','');
+if (hash && ['compression','autonomy','infrastructure'].includes(hash)) {
+  tabs.forEach(t => { t.classList.remove('active'); if(t.dataset.filter === hash) t.classList.add('active'); });
+  sections.forEach(sec => { if(sec.dataset.track !== hash) sec.classList.add('hidden'); else sec.classList.remove('hidden'); });
+}
+</script>
+</body>
+</html>
