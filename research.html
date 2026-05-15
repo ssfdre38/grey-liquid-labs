@@ -158,6 +158,7 @@ a{color:inherit;text-decoration:none}
       <button class="filter-tab active" data-filter="all" role="tab">All</button>
       <button class="filter-tab" data-filter="compression" role="tab">Compression</button>
       <button class="filter-tab" data-filter="autonomy" role="tab">Autonomy</button>
+      <button class="filter-tab" data-filter="architecture" role="tab">Architecture</button>
       <button class="filter-tab" data-filter="infrastructure" role="tab">Infrastructure</button>
     </div>
   </div>
@@ -283,6 +284,69 @@ a{color:inherit;text-decoration:none}
     </div>
   </div>
 
+  <!-- ARCHITECTURE -->
+  <div class="track-section" id="architecture" data-track="architecture">
+    <div class="track-header">
+      <div class="track-icon">🧩</div>
+      <div>
+        <div class="track-label">Research Track</div>
+        <div class="track-title">Architecture Research</div>
+      </div>
+    </div>
+
+    <div class="paper-card featured">
+      <div class="paper-meta">
+        <span class="paper-tag compression">Compression</span>
+        <span class="paper-tag" style="background:rgba(245,158,11,0.12);color:#fbbf24;border-color:rgba(245,158,11,0.3)">Architecture</span>
+        <span class="paper-date">📅 May 15, 2026</span>
+        <span class="paper-status" style="background:rgba(245,158,11,0.12);color:#fbbf24;border-color:rgba(245,158,11,0.3)">Proposal</span>
+      </div>
+      <h3 class="paper-title">Mixture of Models (MoM): Domain-Specialized Neural Slices as Independent Expert Systems</h3>
+      <p class="paper-abstract">We propose <strong>Mixture of Models (MoM)</strong> — a distinct architecture from Mixture of Experts (MoE) — where each knowledge domain is served by a completely independent specialized model. Starting from Gemma 4's 42-layer bf16 weights, we describe a methodology for extracting domain-specific sub-models ("slices") and routing queries through a lightweight orchestrator. Critically, our architecture analysis reveals that Gemma 4's 18 SWA layers (the primary Q2_K failure amplifier) can be isolated — SWA-free slices may enable Q2_K quantization on an architecture that currently cannot survive it, extending the Grey Liquid FFN ratio predictor into a 3D model.</p>
+      <div style="margin-top:16px;padding:16px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
+        <div style="font-size:0.8rem;font-weight:600;color:var(--purple-light);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">Key Architecture Facts (Gemma 4 e4b)</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;font-size:0.85rem">
+          <div><span style="color:var(--text-dim)">Total layers:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">42</code></div>
+          <div><span style="color:var(--text-dim)">Full-attention:</span> <code style="color:var(--green);font-family:'JetBrains Mono',monospace">24 layers ✅</code></div>
+          <div><span style="color:var(--text-dim)">SWA layers:</span> <code style="color:var(--orange);font-family:'JetBrains Mono',monospace">18 layers ⚠️</code></div>
+          <div><span style="color:var(--text-dim)">FFN ratio:</span> <code style="color:var(--orange);font-family:'JetBrains Mono',monospace">4.0x (danger zone)</code></div>
+          <div><span style="color:var(--text-dim)">SWA-free slice:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">~8.6 GB (57% depth)</code></div>
+          <div><span style="color:var(--text-dim)">Q2_K prediction:</span> <code style="color:var(--purple-light);font-family:'JetBrains Mono',monospace">H1: unknown</code></div>
+        </div>
+      </div>
+      <div class="paper-links" style="margin-top:16px">
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_MOM_001.md" target="_blank" class="paper-link primary">📄 Read Proposal →</a>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/mom_slice_extract.py" target="_blank" class="paper-link">🐍 Slice Extractor Script →</a>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px">
+      <div style="font-size:0.85rem;font-weight:600;color:var(--text-muted);margin-bottom:12px">📋 Proposed Experiments</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div style="padding:12px;background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.15);border-radius:8px">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--cyan);margin-bottom:4px">EXPERIMENT #8</div>
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">SWA-Free Slice Q2_K Test</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">Does removing SWA layers restore Q2_K compatibility?</div>
+        </div>
+        <div style="padding:12px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:8px">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--purple-light);margin-bottom:4px">EXPERIMENT #9</div>
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">Domain LoRA Specialization</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">Train code/math/text LoRA adapters, benchmark vs base</div>
+        </div>
+        <div style="padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:8px">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--green);margin-bottom:4px">EXPERIMENT #10</div>
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">Router Accuracy</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">Embedding-similarity classifier for domain routing (&gt;90% target)</div>
+        </div>
+        <div style="padding:12px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:8px">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--orange);margin-bottom:4px">EXPERIMENT #11</div>
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">MoM vs Single Model</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">Does domain ensemble outperform equivalent general model?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- INFRASTRUCTURE -->
   <div class="track-section" id="infrastructure" data-track="infrastructure">
     <div class="track-header">
@@ -378,7 +442,7 @@ tabs.forEach(tab => {
 
 // Handle hash on load
 const hash = window.location.hash.replace('#','');
-if (hash && ['compression','autonomy','infrastructure'].includes(hash)) {
+if (hash && ['compression','autonomy','architecture','infrastructure'].includes(hash)) {
   tabs.forEach(t => { t.classList.remove('active'); if(t.dataset.filter === hash) t.classList.add('active'); });
   sections.forEach(sec => { if(sec.dataset.track !== hash) sec.classList.add('hidden'); else sec.classList.remove('hidden'); });
 }
