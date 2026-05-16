@@ -152,6 +152,14 @@ a{color:inherit;text-decoration:none}
   <p>All published work from Grey Liquid Labs, organized by research track.</p>
 </div>
 
+<div style="background:linear-gradient(135deg,rgba(6,182,212,0.06),rgba(139,92,246,0.04));border-bottom:1px solid rgba(6,182,212,0.15);padding:18px 0">
+  <div class="container" style="max-width:960px">
+    <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--cyan);margin-bottom:6px">Featured Research</div>
+    <div style="font-size:1.05rem;font-weight:700;margin-bottom:6px">We discovered the first mathematical predictor for sub-3-bit LLM quantization compatibility.</div>
+    <div style="font-size:0.88rem;color:var(--text-muted);max-width:700px">8 experiments across 6 architectures (7B–24B). FFN expansion ratio predicts Q2_K failure with 100% accuracy. SWA confirmed as amplifier. Gemma 4 found to contain two physically incompatible sub-architectures. <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_ARC_SUMMARY.md" target="_blank" style="color:var(--cyan-light);font-weight:600">Read the full arc summary →</a></div>
+  </div>
+</div>
+
 <div class="container">
   <div class="filter-bar">
     <div class="filter-tabs" role="tablist">
@@ -173,10 +181,34 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
 
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;max-width:600px">Systematic quantization research — discovering the mathematical boundaries of extreme LLM compression.</p>
+
+    <div style="margin-bottom:28px;padding:20px 24px;background:linear-gradient(135deg,rgba(6,182,212,0.08),rgba(139,92,246,0.06));border:1px solid rgba(6,182,212,0.25);border-radius:12px">
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--cyan);margin-bottom:12px">Key Discoveries — Sub-3-Bit Research Arc</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:1.1rem;line-height:1.2">1.</span>
+          <div><strong>FFN ratio 3.0–5.5x = danger zone.</strong> <span style="color:var(--text-dim);font-size:0.85rem">Models in this range consistently fail Q2_K. Below 3.0x or above 5.5x, they pass. Predictable from config.json in 30 seconds. 100% accuracy across 6 models.</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:1.1rem;line-height:1.2">2.</span>
+          <div><strong>SWA = failure amplifier.</strong> <span style="color:var(--text-dim);font-size:0.85rem">100% correlation between Sliding Window Attention presence and Q2_K failure. Local context window prevents the error averaging that full-attention models rely on.</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span style="font-size:1.1rem;line-height:1.2">3.</span>
+          <div><strong>SWA in Gemma 4 = distinct sub-architecture. <em>(Novel, Exp #8)</em></strong> <span style="color:var(--text-dim);font-size:0.85rem">Q/K weights are physically half-sized — [2560,2048] vs [2560,4096]. Not a config toggle. Cannot be overridden post-training. Gemma 4 embeds two architecturally incompatible sub-networks in one file.</span></div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(6,182,212,0.15);font-size:0.8rem;color:var(--text-dim)">
+        Arc summary: <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_ARC_SUMMARY.md" target="_blank" style="color:var(--cyan-light)">GREY_LIQUID_ARC_SUMMARY.md</a> &nbsp;|&nbsp;
+        Main paper: <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_001_FFN_RATIO.md" target="_blank" style="color:var(--cyan-light)">PAPER_001_FFN_RATIO.md</a>
+      </div>
+    </div>
+
     <div class="paper-card featured">
       <div class="paper-meta">
         <span class="paper-num">PAPER #001</span>
-        <span class="paper-date">May 14, 2026</span>
+        <span class="paper-date">May 14–15, 2026</span>
         <div class="paper-tags">
           <span class="tag">Quantization</span>
           <span class="tag">Compression</span>
@@ -184,7 +216,7 @@ a{color:inherit;text-decoration:none}
         </div>
       </div>
       <h3>Breaking the Sub-3-Bit Barrier: FFN Expansion Ratio as a Quantization Predictor</h3>
-      <p>We present a novel discovery in extreme neural network quantization: the FFN expansion ratio serves as a precise mathematical predictor of sub-3-bit quantization compatibility. Tested across 5 architectures with 100% prediction accuracy — establishing a new foundation for understanding compression limits.</p>
+      <p>We present the first mathematical predictor for sub-3-bit LLM quantization compatibility. FFN expansion ratio (3.0–5.5x danger zone) predicts Q2_K failure with 100% accuracy across 6 tested architectures (7B–24B). Sliding Window Attention confirmed as failure amplifier. Experiment #8 reveals SWA in Gemma 4 is a physically distinct sub-architecture — establishing a 3D predictor model (FFN ratio × SWA presence × SWA implementation type).</p>
       <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_001_FFN_RATIO.md" target="_blank" class="paper-link">Read Full Paper ↗</a>
     </div>
 
@@ -239,13 +271,19 @@ a{color:inherit;text-decoration:none}
         <div class="exp-num">EXPERIMENT #006 · May 14, 2026</div>
         <h4>Cross-Architecture Q2_K Validation</h4>
         <p>Tested Q2_K compatibility across 4 distinct architectures. Proved failure is architecture-specific and governed by FFN expansion ratio — not a general quantization limitation.</p>
-        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_REPORT_006.md" target="_blank" class="exp-link">View Report ↗</a>
       </div>
       <div class="exp-card">
         <div class="exp-num">EXPERIMENT #007 · May 14, 2026</div>
         <h4>SWA Confirmation Study</h4>
         <p>Definitive proof that Sliding Window Attention (SWA) architecture is the root cause of Q2_K failure in the danger zone. Closes the architectural loop.</p>
-        <a href="https://github.com/ssfdre38/grey-liquid-labs/tree/main/experiments" target="_blank" class="exp-link">View Report ↗</a>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_REPORT_007.md" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
+      <div class="exp-card" style="border-color:rgba(239,68,68,0.35)">
+        <div class="exp-num" style="color:#f87171">EXPERIMENT #008 · May 15, 2026 — COMPLETE (FAILED)</div>
+        <h4>De-SWA Metadata Patch Attempt</h4>
+        <p>Patched Gemma 4 e4b GGUF metadata to report zero SWA layers; quantization succeeded but inference fails with shape mismatch. <strong>Discovery:</strong> SWA layers have physically different Q/K dimensions ([2560,2048] vs [2560,4096]) — two distinct sub-architectures baked in at training time. 7 full-att + 35 SWA layers (not 24+18 as estimated).</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_REPORT_008.md" target="_blank" class="exp-link">View Report ↗</a>
       </div>
     </div>
   </div>

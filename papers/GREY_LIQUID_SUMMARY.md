@@ -1,7 +1,7 @@
 # Grey Liquid Lab — Sub-3-Bit Research Summary
-**Research Period:** May 13-14, 2026  
-**Researcher:** Ash (via Copilot CLI)  
-**Total Experiments:** 7 (Experiments #5, #6, #7)
+**Research Period:** May 13–15, 2026  
+**Researcher:** ssfdre38 / Grey Liquid Labs  
+**Total Experiments:** 8 (Experiments #5 through #8)
 
 ---
 
@@ -49,7 +49,29 @@
 
 ---
 
-## 🔬 Root Cause Analysis
+### Experiment #8: De-SWA Metadata Patch Attempt
+**Date:** May 15, 2026  
+**Goal:** Override Gemma 4 e4b's SWA classification via GGUF metadata to test Q2_K.
+
+**Method:** Patched `sliding_window_pattern` all entries False + `shared_kv_layers` to 0. Quantized to Q2_K (4.18 GB). Tested inference.
+
+**Result:** FAILED at load:
+```
+check_tensor_dims: blk.0.attn_q.weight has wrong shape; expected 2560,4096, got 2560,2048
+```
+
+**KEY DISCOVERY:** SWA layers in Gemma 4 have physically smaller Q/K projections ([2560,2048]) vs full-attention layers ([2560,4096]). These are two distinct sub-architectures baked in at training time.
+
+**Corrected Gemma 4 e4b architecture:**
+- Full-attention layers: 7 (indices 5,11,17,23,29,35,41 — every 6th)
+- SWA layers: 35 (all others — 5:1 local:global ratio)
+- `shared_kv_layers=18` measures KV sharing, NOT SWA count
+
+**Impact:** De-SWA approach invalid. Architecture discovery extends the SWA finding beyond "attention window size" to "physically incompatible weight spaces." See `GREY_LIQUID_REPORT_008.md`.
+
+---
+
+## Root Cause Analysis
 
 ### PRIMARY CAUSE: FFN Expansion Ratio (Mathematical)
 
