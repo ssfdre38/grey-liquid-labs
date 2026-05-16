@@ -156,7 +156,7 @@ a{color:inherit;text-decoration:none}
   <div class="container" style="max-width:960px">
     <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--cyan);margin-bottom:6px">Featured Research</div>
     <div style="font-size:1.05rem;font-weight:700;margin-bottom:6px">We discovered the first mathematical predictor for sub-3-bit LLM quantization compatibility.</div>
-    <div style="font-size:0.88rem;color:var(--text-muted);max-width:700px">8 experiments across 6 architectures (7B–24B). FFN expansion ratio predicts Q2_K failure with 100% accuracy. SWA confirmed as amplifier. Gemma 4 found to contain two physically incompatible sub-architectures. <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_ARC_SUMMARY.md" target="_blank" style="color:var(--cyan-light);font-weight:600">Read the full arc summary →</a></div>
+    <div style="font-size:0.88rem;color:var(--text-muted);max-width:700px">8 experiments across 6 architectures (7B–24B). FFN expansion ratio predicts Q2_K failure with 100% accuracy. SWA confirmed as amplifier. Gemma 4 found to contain two physically incompatible sub-architectures. Exp#8b identified and fixed an upstream llama.cpp bug (<a href="https://github.com/ggml-org/llama.cpp/pull/23131" target="_blank" style="color:var(--cyan-light);font-weight:600">PR #23131</a>). <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_ARC_SUMMARY.md" target="_blank" style="color:var(--cyan-light);font-weight:600">Read the full arc summary →</a></div>
   </div>
 </div>
 
@@ -285,6 +285,12 @@ a{color:inherit;text-decoration:none}
         <p>Patched Gemma 4 e4b GGUF metadata to report zero SWA layers; quantization succeeded but inference fails with shape mismatch. <strong>Discovery:</strong> SWA layers have physically different Q/K dimensions ([2560,2048] vs [2560,4096]) — two distinct sub-architectures baked in at training time. 7 full-att + 35 SWA layers (not 24+18 as estimated).</p>
         <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_REPORT_008.md" target="_blank" class="exp-link">View Report ↗</a>
       </div>
+      <div class="exp-card" style="border-color:rgba(239,68,68,0.35)">
+        <div class="exp-num" style="color:#f87171">EXPERIMENT #008b · May 15, 2026 — COMPLETE (FAILED)</div>
+        <h4>SWA-Only Slice Q2_K Inference Test + llama.cpp Bug Fix</h4>
+        <p>Extracted all 35 SWA layers from Gemma 4 e4b as standalone model (3.72 GB Q2_K, 4.72 BPW). Discovered <strong>llama.cpp upstream bug</strong>: <code>llm_graph_input_attn_kv_iswa</code> lacks null-buffer guard for all-SWA models — GGML_ASSERT crash. Fixed and submitted as <a href="https://github.com/ggml-org/llama.cpp/pull/23131" target="_blank" style="color:var(--cyan-light)">PR #23131</a>. After fix: model runs at 14.7 t/s but output is fully incoherent. The 7 full-attention layers are architecturally essential — truncation is sufficient to break coherence regardless of quantization level.</p>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_REPORT_008B.md" target="_blank" class="exp-link">View Report ↗</a>
+      </div>
     </div>
   </div>
 
@@ -345,8 +351,8 @@ a{color:inherit;text-decoration:none}
         <div style="font-size:0.8rem;font-weight:600;color:var(--purple-light);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">Key Architecture Facts (Gemma 4 e4b)</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;font-size:0.85rem">
           <div><span style="color:var(--text-dim)">Total layers:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">42</code></div>
-          <div><span style="color:var(--text-dim)">Full-attention:</span> <code style="color:var(--green);font-family:'JetBrains Mono',monospace">24 layers ✅</code></div>
-          <div><span style="color:var(--text-dim)">SWA layers:</span> <code style="color:var(--orange);font-family:'JetBrains Mono',monospace">18 layers ⚠️</code></div>
+          <div><span style="color:var(--text-dim)">Full-attention:</span> <code style="color:var(--green);font-family:'JetBrains Mono',monospace">7 layers ✅ (Exp#8 confirmed)</code></div>
+          <div><span style="color:var(--text-dim)">SWA layers:</span> <code style="color:var(--orange);font-family:'JetBrains Mono',monospace">35 layers ⚠️ (Exp#8 confirmed)</code></div>
           <div><span style="color:var(--text-dim)">FFN ratio:</span> <code style="color:var(--orange);font-family:'JetBrains Mono',monospace">4.0x (danger zone)</code></div>
           <div><span style="color:var(--text-dim)">SWA-free slice:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">~8.6 GB (57% depth)</code></div>
           <div><span style="color:var(--text-dim)">Q2_K prediction:</span> <code style="color:var(--purple-light);font-family:'JetBrains Mono',monospace">H1: unknown</code></div>
@@ -369,7 +375,7 @@ a{color:inherit;text-decoration:none}
         <div style="padding:12px;background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.2);border-radius:8px">
           <div style="font-size:0.75rem;font-weight:600;color:#f87171;margin-bottom:4px">EXPERIMENT #8b — COMPLETE</div>
           <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">SWA-Only Slice Q2_K Test ❌</div>
-          <div style="font-size:0.8rem;color:var(--text-dim)">Extracted 35-layer all-SWA Gemma 4 e4b slice (3.72 GB Q2_K, 4.72 BPW). Model loads and generates tokens (14.7 t/s) after patching llama.cpp bug (ISWA null-buffer guard missing for all-SWA models). Output: <strong>incoherent</strong>. The 7 full-attention "global integration" layers are architecturally essential — truncation alone breaks coherence before quantization. Sub-3-bit barrier is architectural, not purely quantization-related. llama.cpp upstream fix identified.</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">Extracted 35-layer all-SWA Gemma 4 e4b slice (3.72 GB Q2_K, 4.72 BPW). Model loads and generates tokens (14.7 t/s) after patching llama.cpp bug (ISWA null-buffer guard missing for all-SWA models). Output: <strong>incoherent</strong>. The 7 full-attention "global integration" layers are architecturally essential — truncation alone breaks coherence before quantization. Sub-3-bit barrier is architectural, not purely quantization-related. <a href="https://github.com/ggml-org/llama.cpp/pull/23131" target="_blank" style="color:var(--cyan-light);font-weight:600">llama.cpp upstream PR #23131 submitted ↗</a></div>
         </div>
         <div style="padding:12px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:8px">
           <div style="font-size:0.75rem;font-weight:600;color:var(--purple-light);margin-bottom:4px">EXPERIMENT #9</div>
