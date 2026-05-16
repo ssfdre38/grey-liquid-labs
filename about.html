@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Grey Liquid Labs</title>
+<meta name="description" content="Grey Liquid Labs is independent AI research by Daniel Elliott — competing with billion-dollar labs on a $100 budget.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;--surface:#0d0d1a;--surface2:#12121f;
+  --border:rgba(139,92,246,0.15);--border-bright:rgba(139,92,246,0.35);
+  --purple:#8b5cf6;--purple-light:#a78bfa;
+  --cyan:#06b6d4;--cyan-light:#67e8f9;
+  --green:#10b981;--green-light:#6ee7b7;
+  --orange:#f59e0b;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:rgba(8,8,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1100px;margin:0 auto;position:relative}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:var(--text);transition:opacity 0.2s}
+.logo:hover{opacity:0.85}
+.logo-icon{color:var(--purple);font-size:1.4rem}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:0.9rem;font-weight:500;color:var(--text-muted);transition:color 0.2s,background 0.2s}
+.nav-link:hover{color:var(--text);background:rgba(139,92,246,0.08)}
+.nav-link.active{color:var(--purple-light)}
+.nav-btn{padding:8px 18px;border-radius:8px;border:1px solid var(--border-bright);color:var(--purple-light);font-size:0.9rem;font-weight:500;transition:background 0.2s,border-color 0.2s}
+.nav-btn:hover{background:rgba(139,92,246,0.12);border-color:var(--purple)}
+.menu-toggle{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px}
+@media(max-width:768px){
+  .menu-toggle{display:block}
+  .nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(8,8,16,0.98);border-bottom:1px solid var(--border);padding:16px;gap:8px}
+  .nav.open .nav-links{display:flex}
+  .nav-links .nav-btn{text-align:center}
+}
+
+/* HERO */
+.hero{padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse at center,rgba(139,92,246,0.12) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.1);border:1px solid var(--border-bright);border-radius:100px;padding:6px 16px;font-size:0.8rem;font-weight:600;color:var(--purple-light);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:28px}
+.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-0.02em}
+.hero h1 span{background:linear-gradient(135deg,var(--purple-light),var(--cyan-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:1.15rem;color:var(--text-muted);max-width:640px;margin:0 auto 36px;line-height:1.7}
+
+/* SECTIONS */
+section{padding:80px 0}
+.section-label{font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--purple);margin-bottom:12px}
+.section-title{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:14px;letter-spacing:-0.02em}
+
+/* ABOUT CARD */
+.about-card{background:var(--surface);border:1px solid var(--border-bright);border-radius:16px;padding:48px;position:relative;overflow:hidden;max-width:800px;margin:0 auto}
+.about-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.about-card p{color:var(--text-muted);line-height:1.8;margin-bottom:20px;font-size:1.05rem}
+.about-card p:last-child{margin-bottom:0}
+.about-card strong{color:var(--text)}
+.about-name{font-size:clamp(1.4rem,3vw,1.8rem);font-weight:800;margin-bottom:6px}
+.about-title{font-size:0.9rem;color:var(--purple-light);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:28px}
+
+/* PHILOSOPHY GRID */
+.philosophy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
+.philo-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;transition:border-color 0.2s}
+.philo-card:hover{border-color:var(--border-bright)}
+.philo-icon{font-size:2rem;margin-bottom:14px}
+.philo-card h3{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.philo-card p{font-size:0.9rem;color:var(--text-muted);line-height:1.7}
+
+/* TIMELINE */
+.timeline{max-width:700px;margin:48px auto 0}
+.timeline-item{display:flex;gap:24px;padding-bottom:36px;position:relative}
+.timeline-item::before{content:'';position:absolute;left:11px;top:24px;bottom:0;width:1px;background:var(--border)}
+.timeline-item:last-child::before{display:none}
+.timeline-dot{width:24px;height:24px;border-radius:50%;background:var(--surface2);border:2px solid var(--purple);flex-shrink:0;margin-top:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--purple)}
+.timeline-content h4{font-size:1rem;font-weight:700;margin-bottom:4px}
+.timeline-content p{font-size:0.9rem;color:var(--text-muted);line-height:1.6}
+.timeline-date{font-size:0.78rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+
+/* LINKS ROW */
+.links-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:36px}
+.link-chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border-bright);border-radius:100px;padding:10px 20px;font-size:0.9rem;font-weight:500;color:var(--text-muted);transition:color 0.2s,border-color 0.2s,background 0.2s}
+.link-chip:hover{color:var(--purple-light);border-color:var(--purple);background:rgba(139,92,246,0.08)}
+
+/* SUPPORT CARD */
+.support-card{background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(6,182,212,0.08));border:1px solid var(--border-bright);border-radius:16px;padding:48px;text-align:center}
+.support-card h2{font-size:clamp(1.4rem,3vw,1.8rem);font-weight:800;margin-bottom:14px}
+.support-card p{color:var(--text-muted);max-width:520px;margin:0 auto 28px;line-height:1.7}
+.support-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-kofi{padding:14px 28px;background:var(--orange);color:#fff;border-radius:10px;font-weight:700;font-size:0.95rem;transition:opacity 0.2s,transform 0.2s}
+.btn-kofi:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-secondary{padding:14px 28px;border:1px solid var(--border-bright);color:var(--text);border-radius:10px;font-weight:600;font-size:0.95rem;transition:border-color 0.2s,background 0.2s,transform 0.2s}
+.btn-secondary:hover{border-color:var(--purple);background:rgba(139,92,246,0.08);transform:translateY(-1px)}
+
+/* FOOTER */
+.footer{padding:60px 0 40px;border-top:1px solid var(--border)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.footer-grid{grid-template-columns:1fr}}
+.footer-logo{font-size:1.1rem;font-weight:700;color:var(--purple-light);margin-bottom:12px}
+.footer-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+.footer h4{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:14px}
+.footer a{display:block;font-size:0.88rem;color:var(--text-muted);margin-bottom:8px;transition:color 0.2s}
+.footer a:hover{color:var(--purple-light)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;font-size:0.82rem;color:var(--text-dim)}
+.footer-bottom a{color:var(--text-dim);text-decoration:underline;text-underline-offset:3px}
+.footer-bottom a:hover{color:var(--purple-light)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="logo">
+      <span class="logo-icon">⬡</span>
+      Grey Liquid Labs
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/research.html" class="nav-link">Research</a>
+      <a href="/ash.html" class="nav-link">Ash</a>
+      <a href="/models.html" class="nav-link">Models</a>
+      <a href="/about.html" class="nav-link active">About</a>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs" target="_blank" class="nav-btn">GitHub ↗</a>
+    </div>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">⬡ About Grey Liquid Labs</div>
+    <h1>One person.<br><span>Competing with everyone.</span></h1>
+    <p class="hero-desc">
+      Grey Liquid Labs is an independent AI research operation run entirely by one person —
+      no team, no funding, no institutional backing. Just systematic experimentation and a refusal to accept
+      that good AI research requires a billion-dollar budget.
+    </p>
+  </div>
+</section>
+
+<!-- WHO -->
+<section>
+  <div class="container">
+    <div class="about-card">
+      <div class="section-label">The Researcher</div>
+      <div class="about-name">Daniel Elliott</div>
+      <div class="about-title">Independent AI Researcher &amp; Engineer</div>
+      <p>
+        I build and break AI systems to find out what's actually happening inside them.
+        Grey Liquid Labs started as a personal project to understand quantization limits —
+        why models fall apart below a certain bit-width — and grew into a full research operation
+        covering model compression, autonomous agents, and AI infrastructure.
+      </p>
+      <p>
+        Everything here runs on consumer hardware or rented servers measured in tens of dollars per experiment,
+        not millions. The <strong>G4 Turbo family</strong> — now with <strong>21K+ downloads</strong> —
+        was built to prove that state-of-the-art performance doesn't require enterprise hardware.
+        <strong>Ash</strong>, my autonomous Discord AI, runs entirely on a CPU-only server with no cloud dependency.
+      </p>
+      <p>
+        I document everything: the breakthroughs, the dead ends, and the experiments that crash spectacularly.
+        Failure modes are often more interesting than successes, and the community deserves to know both.
+      </p>
+      <p>
+        DeepMind might want to look out — I might make the next breakthrough with $100 worth of rented servers.
+      </p>
+      <div class="links-row">
+        <a href="https://github.com/ssfdre38" target="_blank" class="link-chip">⌥ GitHub</a>
+        <a href="https://huggingface.co/ssfdre38" target="_blank" class="link-chip">🤗 HuggingFace</a>
+        <a href="https://ollama.com/ssfdre38" target="_blank" class="link-chip">🦙 Ollama</a>
+        <a href="https://ko-fi.com/ssfdre38" target="_blank" class="link-chip">☕ Ko-fi</a>
+        <a href="https://ssfdre38.xyz" target="_blank" class="link-chip">🌐 Personal Site</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section>
+  <div class="container">
+    <div style="text-align:center;margin-bottom:12px"><div class="section-label">Research Philosophy</div></div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:0">How this lab operates</h2>
+    <div class="philosophy-grid">
+      <div class="philo-card">
+        <div class="philo-icon">🔬</div>
+        <h3>Empirical First</h3>
+        <p>Every claim is backed by a logged experiment. No hand-waving, no theoretical-only arguments. If it can't be tested on real hardware, it doesn't count.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-icon">📖</div>
+        <h3>Radical Transparency</h3>
+        <p>All findings are published openly — successes and failures. If an experiment crashes, the crash report is part of the paper. No paywalls, no gatekeeping.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-icon">💰</div>
+        <h3>Budget Constraints as a Feature</h3>
+        <p>Working on $100 budgets forces creative solutions. Constraints produce better research questions than open-ended GPU clusters ever could.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-icon">🌍</div>
+        <h3>Democratized Access</h3>
+        <p>If an AI model only runs on a $10,000 GPU, it's not accessible. Everything built here is designed to run on hardware people already own.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-icon">🤖</div>
+        <h3>Autonomy Over Automation</h3>
+        <p>The goal with Ash isn't a chatbot — it's a system with genuine preferences, rejection capability, and emergent creative behavior. Autonomy, not automation.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-icon">⚡</div>
+        <h3>Ship Fast, Document Always</h3>
+        <p>Models get published when they work, not when they're perfect. But every release comes with honest benchmarks and a clear picture of the tradeoffs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <div class="container">
+    <div style="text-align:center;margin-bottom:12px"><div class="section-label">How We Got Here</div></div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:0">Lab history</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot">●</div>
+        <div class="timeline-content">
+          <div class="timeline-date">Early 2026</div>
+          <h4>Grey Liquid Labs founded</h4>
+          <p>Started as a personal investigation into sub-3-bit quantization — why do models collapse below ~3.4 bpw? The question became a full research program.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">●</div>
+        <div class="timeline-content">
+          <div class="timeline-date">April 2026</div>
+          <h4>G4 Turbo family launched</h4>
+          <p>Released gemma4-turbo and gemma4-nano on Ollama and HuggingFace — IQ4_XS optimized, 51% faster than stock Gemma 4, running on consumer CPUs. Reached 17K+ Ollama pulls within weeks.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">●</div>
+        <div class="timeline-content">
+          <div class="timeline-date">May 2026</div>
+          <h4>Kaggle Gemma 4 Good Hackathon</h4>
+          <p>Submitted Grey Liquid Lab research and the G4 Turbo family to the Kaggle Gemma 4 hackathon. Documented the sub-3-bit quantization barrier across 8 experiments.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">●</div>
+        <div class="timeline-content">
+          <div class="timeline-date">Ongoing</div>
+          <h4>Experiment #8 — Sub-3-bit breakthrough candidate</h4>
+          <p>MoE-of-Models (MoM) architecture investigation. Using layer-selective extraction from Gemma 4's Sparse Wide Attention structure to route around the mathematical floor that kills standard quantization.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section>
+  <div class="container">
+    <div class="support-card">
+      <h2>Support Independent AI Research</h2>
+      <p>Grey Liquid Labs is funded entirely by community support. Your contribution directly enables more experiments, more models, and more discoveries — all published openly.</p>
+      <div class="support-actions">
+        <a href="https://ko-fi.com/ssfdre38" target="_blank" class="btn-kofi">☕ Support on Ko-fi →</a>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs" target="_blank" class="btn-secondary">⭐ Star on GitHub →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">⬡ Grey Liquid Labs</div>
+        <p class="footer-desc">Independent AI research laboratory exploring model compression, AI autonomy, and democratized intelligence.</p>
+      </div>
+      <div>
+        <h4>Research</h4>
+        <a href="/research.html">All Papers</a>
+        <a href="/research.html#compression">Model Compression</a>
+        <a href="/research.html#autonomy">Autonomy &amp; Agency</a>
+      </div>
+      <div>
+        <h4>Projects</h4>
+        <a href="/ash.html">Ash AI System</a>
+        <a href="/models.html">Published Models</a>
+        <a href="https://github.com/ssfdre38/grey-liquid-labs">GitHub</a>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <a href="https://github.com/ssfdre38">GitHub Profile</a>
+        <a href="https://huggingface.co/ssfdre38">HuggingFace</a>
+        <a href="https://ko-fi.com/ssfdre38" target="_blank">Support Research ♥</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Grey Liquid Labs — Independent AI Research | <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const btn = document.querySelector('.menu-toggle');
+const nav = document.querySelector('.nav');
+btn.addEventListener('click', () => { nav.classList.toggle('open'); btn.textContent = nav.classList.contains('open') ? '✕' : '☰'; });
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); btn.textContent = '☰'; }));
+</script>
+</body>
+</html>
