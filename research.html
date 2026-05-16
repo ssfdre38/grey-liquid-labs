@@ -302,7 +302,7 @@ a{color:inherit;text-decoration:none}
         <span class="paper-status" style="background:rgba(245,158,11,0.12);color:#fbbf24;border-color:rgba(245,158,11,0.3)">Proposal</span>
       </div>
       <h3 class="paper-title">Mixture of Models (MoM): Domain-Specialized Neural Slices as Independent Expert Systems</h3>
-      <p class="paper-abstract">We propose <strong>Mixture of Models (MoM)</strong> — a distinct architecture from Mixture of Experts (MoE) — where each knowledge domain is served by a completely independent specialized model. Starting from Gemma 4's 42-layer bf16 weights, we describe a methodology for extracting domain-specific sub-models ("slices") and routing queries through a lightweight orchestrator. Critically, our architecture analysis reveals that Gemma 4's 18 SWA layers (the primary Q2_K failure amplifier) can be isolated — SWA-free slices may enable Q2_K quantization on an architecture that currently cannot survive it, extending the Grey Liquid FFN ratio predictor into a 3D model.</p>
+      <p class="paper-abstract">We propose <strong>Mixture of Models (MoM)</strong> — a distinct architecture from Mixture of Experts (MoE) — where each knowledge domain is served by a completely independent specialized model. Starting from Gemma 4's 42-layer bf16 weights, we describe a methodology for extracting domain-specific sub-models ("slices") and routing queries through a lightweight orchestrator. Architecture analysis (Exp#8) reveals Gemma 4 contains <em>two distinct attention sub-architectures</em>: 7 full-attention layers and 35 SWA layers — physically incompatible at the weight level. This deepens the MoM case: the model already has natural architectural boundaries. SWA-layer-only slices (35 layers) are the most promising path to Q2_K-compatible domain experts, extending the Grey Liquid FFN ratio predictor into a 3D model.</p>
       <div style="margin-top:16px;padding:16px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px">
         <div style="font-size:0.8rem;font-weight:600;color:var(--purple-light);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">Key Architecture Facts (Gemma 4 e4b)</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;font-size:0.85rem">
@@ -323,10 +323,15 @@ a{color:inherit;text-decoration:none}
     <div style="margin-top:24px;padding:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px">
       <div style="font-size:0.85rem;font-weight:600;color:var(--text-muted);margin-bottom:12px">📋 Proposed Experiments</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div style="padding:12px;background:rgba(6,182,212,0.05);border:1px solid rgba(220,38,38,0.4);border-radius:8px">
+          <div style="font-size:0.75rem;font-weight:600;color:#f87171;margin-bottom:4px">EXPERIMENT #8 — COMPLETE</div>
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">SWA-Free Slice Q2_K Test ❌</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">De-SWA metadata patch fails: SWA layers have physically different Q/K tensor shapes ([2560,2048] vs [2560,4096]). Discovery: Gemma 4 has 7 full-att + 35 SWA layers — two distinct sub-architectures.</div>
+        </div>
         <div style="padding:12px;background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.15);border-radius:8px">
-          <div style="font-size:0.75rem;font-weight:600;color:var(--cyan);margin-bottom:4px">EXPERIMENT #8</div>
-          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">SWA-Free Slice Q2_K Test</div>
-          <div style="font-size:0.8rem;color:var(--text-dim)">Does removing SWA layers restore Q2_K compatibility?</div>
+          <div style="font-size:0.75rem;font-weight:600;color:var(--cyan);margin-bottom:4px">EXPERIMENT #8b — PROPOSED</div>
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">SWA-Only Slice Q2_K Test</div>
+          <div style="font-size:0.8rem;color:var(--text-dim)">Extract 35 SWA layers as standalone model, test Q2_K. Local attention may be more Q2_K-tolerant than global at FFN ratio 4.0x.</div>
         </div>
         <div style="padding:12px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:8px">
           <div style="font-size:0.75rem;font-weight:600;color:var(--purple-light);margin-bottom:4px">EXPERIMENT #9</div>

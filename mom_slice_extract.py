@@ -34,76 +34,44 @@ except ImportError:
 def get_swa_layer_indices(reader):
     """
     Determine which layer indices use Sliding Window Attention.
-    In Gemma 4, SWA layers alternate with full-attention layers.
-    The metadata tells us: shared_kv_layers = 18 out of 42 total.
-    
-    Gemma 4 pattern: layers 0,1,2,3... with SWA on every other layer
-    (approximately). We detect by checking tensor names for swa-specific
-    parameters or by known architecture patterns.
+
+    Reads directly from the 'sliding_window_pattern' boolean array in GGUF
+    metadata. In Gemma 4 e4b: True = SWA layer, False = full-attention layer.
+
+    Confirmed Gemma 4 e4b architecture (from GGUF sliding_window_pattern):
+    - 35 SWA layers (indices 0-4, 6-10, 12-16, 18-22, 24-28, 30-34, 36-40)
+    - 7 full-attention layers (indices 5, 11, 17, 23, 29, 35, 41 — every 6th)
+    - Ratio: 5:1 local:global  (matches Gemma 4 architecture paper)
+
+    NOTE: The 'shared_kv_layers' metadata field (value=18) refers to KV sharing
+    across blocks, NOT the number of SWA layers. Do not confuse these.
     """
     total_blocks = None
-    swa_count = None
-    
     for key in reader.fields:
         if 'block_count' in key:
             total_blocks = int(reader.fields[key].parts[-1][0])
-        if 'shared_kv_layers' in key:
-            swa_count = int(reader.fields[key].parts[-1][0])
-    
+
     if total_blocks is None:
         raise ValueError("Could not find block_count in GGUF metadata")
-    
-    print(f"Total blocks: {total_blocks}")
-    print(f"SWA (shared_kv) layers: {swa_count}")
-    
-    # Gemma 4 alternating attention pattern:
-    # Local (SWA) attention on layers where (layer_index % sliding_window_every == 0)
-    # Based on Gemma 4 architecture: full attention every 6th layer, rest are SWA
-    # Pattern: SWA, SWA, SWA, SWA, SWA, FULL, SWA, SWA, SWA, SWA, SWA, FULL, ...
-    # i.e., full attention at indices 5, 11, 17, 23, 29, 35, 41 (every 6th, 0-indexed)
-    
-    # Detect from tensor names if possible
-    swa_layers = set()
-    full_layers = set()
-    
-    for tensor in reader.tensors:
-        name = tensor.name
-        # Check for SWA-specific tensor names
-        if 'swa' in name.lower() or 'sliding' in name.lower():
-            # Extract block index
-            parts = name.split('.')
-            if len(parts) >= 2 and parts[0] == 'blk':
-                try:
-                    swa_layers.add(int(parts[1]))
-                except ValueError:
-                    pass
-    
-    if swa_layers:
-        full_layers = set(range(total_blocks)) - swa_layers
-        print(f"Detected SWA layers from tensor names: {sorted(swa_layers)}")
+
+    print(f"[info] Total blocks: {total_blocks}")
+
+    # Primary: read directly from sliding_window_pattern field
+    if 'gemma4.attention.sliding_window_pattern' in reader.fields:
+        f = reader.fields['gemma4.attention.sliding_window_pattern']
+        pattern = [bool(f.parts[idx][0]) for idx in f.data]  # True = SWA
+        full_layers = sorted(i for i, v in enumerate(pattern) if not v)
+        swa_layers  = sorted(i for i, v in enumerate(pattern) if v)
+        print(f"[info] Pattern read from GGUF: {len(swa_layers)} SWA, {len(full_layers)} full-att")
     else:
-        # Fall back to Gemma 4 known pattern: full attention every 6 layers
-        # (layer 5, 11, 17, 23, 29, 35, 41 = 7 full attention layers)
-        # BUT metadata says 18 shared_kv_layers, so 42-18=24 full attention layers
-        # This means approximately every other layer alternates
-        # Gemma 4 paper: alternating local/global with ratio ~5:1 local to global
-        # Let's use: full attention at every 6th layer starting at index 5
-        full_indices = list(range(5, total_blocks, 6))
-        # Adjust if count doesn't match
-        if swa_count is not None:
-            expected_full = total_blocks - swa_count
-            # Use evenly spaced full attention layers
-            import math
-            step = total_blocks / expected_full
-            full_indices = [int(i * step + step - 1) for i in range(expected_full)]
-            full_indices = [min(i, total_blocks - 1) for i in full_indices]
-        
-        full_layers = set(full_indices)
-        swa_layers = set(range(total_blocks)) - full_layers
-        print(f"Inferred full-attention layers ({len(full_layers)}): {sorted(full_layers)}")
-        print(f"Inferred SWA layers ({len(swa_layers)}): {sorted(swa_layers)}")
-    
-    return sorted(full_layers), sorted(swa_layers)
+        # Fallback: Gemma 4 default — full attention every 6th layer
+        full_layers = list(range(5, total_blocks, 6))
+        swa_layers  = [i for i in range(total_blocks) if i not in set(full_layers)]
+        print(f"[info] sliding_window_pattern not found — using Gemma 4 default (every 6th)")
+
+    print(f"[info] Full-attention layers ({len(full_layers)}): {full_layers}")
+    print(f"[info] SWA layers ({len(swa_layers)}): {swa_layers}")
+    return full_layers, swa_layers
 
 
 def show_info(model_path):

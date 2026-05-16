@@ -89,12 +89,19 @@ We analyzed the `gemma4-e4b-bf16.gguf` file (14.02 GB) to establish the slicing 
 
 ### 2.2 The SWA Layer Distribution
 
-Gemma 4 uses **alternating attention**: some layers use full global attention, others use Sliding Window Attention (SWA). Based on metadata:
+Gemma 4 uses **alternating attention**: some layers use full global attention, others use Sliding Window Attention (SWA). Reading directly from the `sliding_window_pattern` boolean array in GGUF metadata (confirmed via Experiment #8):
 
-- **Full attention layers**: 42 − 18 = **24 layers** (key_length=512, global context)
-- **SWA layers**: **18 layers** (key_length_swa=256, 512-token window)
+- **Full attention layers**: **7 layers** (indices 5, 11, 17, 23, 29, 35, 41 — every 6th layer)
+- **SWA layers**: **35 layers** (all remaining layers)
+- **Ratio**: 5:1 local:global — matches Gemma 4 architecture paper
 
-This alternating pattern is characteristic of Gemma 4's architecture — local attention for efficiency, global attention for long-range reasoning.
+> **⚠️ Correction from initial proposal:** The `shared_kv_layers` metadata field (value=18) measures KV sharing across blocks, **not** the SWA layer count. The actual count of 35 SWA / 7 full-attention was confirmed via Experiment #8.
+
+**Critical finding from Experiment #8:** SWA layers have physically different tensor shapes than full-attention layers:
+- Full-attention Q/K: `[2560, 4096]` (8 heads × 512 head_dim)
+- SWA Q/K: `[2560, 2048]` (8 heads × 256 head_dim_swa)
+
+These are **two distinct sub-architectures** in one file — incompatible at the weight level, not just via metadata.
 
 ### 2.3 The Already-Sliced Vision Component
 
@@ -173,12 +180,13 @@ Based on natural knowledge clustering and query type distribution:
 - Size: ~14GB × 7 = ~98GB total (before quantization)
 - After domain Q2_K (if H1 confirmed): potentially ~3GB × 7 = ~21GB total
 
-**Option B: SWA-Free Slice (Novel)**
-- Extract 24 full-attention layers from e4b
+**Option B: SWA-Free Slice (Novel — revised post Exp#8)**
+- Extract **7 full-attention layers** from e4b (corrected from initial estimate of 24)
 - Add new embedding + output head (re-use from original model)
 - Fine-tune each slice on domain data
-- Hypothesis: Q2_K compatible (no SWA)
-- Size: ~8GB × 7 → ~2GB × 7 after Q2_K = ~14GB total
+- Hypothesis: Q2_K compatible (no SWA), but **only 7 layers deep — may lack generation quality**
+- Size: ~2.3GB × 7 → ~700MB × 7 after Q2_K = ~5GB total
+- ⚠️ Depth concern: 7 layers may be insufficient for coherent domain specialization
 
 **Option C: LoRA Adapters (Most Practical Near-Term)**
 - One base model (e4b or e2b quantized)
@@ -295,11 +303,18 @@ A user with 4GB RAM can run the math expert for math questions, the code expert 
 
 ## 7. Proposed Experiments
 
-### Experiment #8: SWA-Free Slice Q2_K Compatibility
-**Question:** Does removing SWA layers from Gemma 4 e4b create a Q2_K-compatible slice?
-**Method:** Extract 24 full-attention layers, test Q2_K without fine-tuning
+### Experiment #8: SWA-Free Slice Q2_K Compatibility ✅ COMPLETE — DISPROVED
+**Question:** Does removing SWA layers from Gemma 4 e4b (via metadata patch) create a Q2_K-compatible model?  
+**Method:** Metadata-patch all 35 SWA entries → False, quantize to Q2_K, test inference  
+**Result:** ❌ **Fails at load** — SWA layers have physically different Q/K tensor shapes (`[2560,2048]` vs `[2560,4096]`). Cannot metadata-patch between architectures with incompatible weight dimensions.  
+**Key discovery:** Gemma 4 contains **two distinct attention sub-architectures**: 7 full-attention layers (every 6th) and 35 SWA layers. These groups are separated by tensor shape, not just metadata.  
+**See:** `GREY_LIQUID_REPORT_008.md`
+
+### Experiment #8b: SWA-Only Q2_K (Proposed)
+**Question:** Can the 35 SWA-only layers (extracted as a standalone model) run at Q2_K?
+**Method:** Extract all SWA layer tensors → new GGUF → Q2_K → inference test
 **Success metric:** Coherent output on "What is 2+2?" within 10 seconds
-**Resources:** Python + gguf library, existing hardware
+**Hypothesis:** Local-window attention may be more Q2_K tolerant than global attention at FFN ratio 4.0x
 
 ### Experiment #9: Domain Specialization via LoRA
 **Question:** Can LoRA adapters create meaningful domain specialization?
@@ -358,14 +373,19 @@ gemma4.feed_forward_length = 10240
 gemma4.attention.head_count = 8
 gemma4.attention.head_count_kv = 2
 gemma4.attention.sliding_window = 512
-gemma4.attention.shared_kv_layers = 18
-gemma4.attention.key_length = 512        (full attention)
-gemma4.attention.key_length_swa = 256    (sliding window)
+gemma4.attention.shared_kv_layers = 18    ← KV sharing, NOT SWA count
+gemma4.attention.key_length = 512          (full attention)
+gemma4.attention.key_length_swa = 256      (sliding window — half head_dim)
 gemma4.rope.freq_base = 1000000.0
 gemma4.rope.freq_base_swa = 10000.0
-FFN ratio: 10240 / 2560 = 4.0x          ← DANGER ZONE (3.0x–5.5x)
-Full attention layers: 42 - 18 = 24
-SWA layers: 18
+FFN ratio: 10240 / 2560 = 4.0x            ← DANGER ZONE (3.0x–5.5x)
+
+** CORRECTED layer distribution (confirmed via sliding_window_pattern array, Exp#8) **
+Full attention layers: 7  (indices 5, 11, 17, 23, 29, 35, 41 — every 6th)
+SWA layers:          35  (all remaining — 5:1 local:global ratio)
+
+Full-attention tensor shapes:  Q [2560, 4096], K [2560, 1024]
+SWA tensor shapes:             Q [2560, 2048], K [2560,  512]
 ```
 
 ---
