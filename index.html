@@ -170,7 +170,7 @@ section{padding:80px 0}
   </div>
   <div class="hero-stats">
     <div class="stat"><span class="stat-num">17K+</span><span class="stat-label">Model Downloads</span></div>
-    <div class="stat"><span class="stat-num">7</span><span class="stat-label">Experiments</span></div>
+    <div class="stat"><span class="stat-num">8+</span><span class="stat-label">Experiments</span></div>
     <div class="stat"><span class="stat-num">4</span><span class="stat-label">Research Tracks</span></div>
     <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Prediction Accuracy</span></div>
   </div>
@@ -278,14 +278,14 @@ section{padding:80px 0}
     <p class="section-desc" style="margin-bottom:36px">The latest results from active research programs.</p>
     <div class="exp-grid">
       <div class="exp-card">
-        <div class="exp-num">EXPERIMENT #007</div>
-        <h3>SWA Confirmation</h3>
-        <p>Proved that Sliding Window Attention architecture causes Q2_K quantization failure — confirming the architectural root cause of the danger zone.</p>
+        <div class="exp-num">EXPERIMENT #008b</div>
+        <h3>SWA-Only Gemma 4 + llama.cpp Bug Fix</h3>
+        <p>Extracted 35 SWA layers from Gemma 4 e4b as a standalone model. Discovered and fixed an upstream llama.cpp null-buffer crash (<a href="https://github.com/ggml-org/llama.cpp/pull/23131" target="_blank" style="color:var(--cyan-light)">PR #23131</a>). Confirmed FA layers are architecturally essential.</p>
       </div>
       <div class="exp-card">
-        <div class="exp-num">EXPERIMENT #006</div>
-        <h3>Cross-Architecture Q2_K</h3>
-        <p>Tested 4 model architectures. Proved sub-3-bit quantization compatibility is architecture-specific and governed by the FFN expansion ratio.</p>
+        <div class="exp-num">EXPERIMENT #008</div>
+        <h3>Gemma 4 Dual Architecture Discovery</h3>
+        <p>Found that Gemma 4 e4b contains two physically incompatible sub-architectures: 7 full-attention layers + 35 SWA layers. Developed de-SWA extraction patch for llama.cpp.</p>
       </div>
       <div class="exp-card">
         <div class="exp-num">AUTONOMY STUDY #001</div>
