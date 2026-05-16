@@ -263,21 +263,31 @@ def extract_slice(model_path, output_path, keep_layers, swa_only=False):
             except ValueError:
                 writer.add_tensor(name, tensor.data, raw_dtype=tensor.tensor_type)
                 kept += 1
+        elif name == 'rope_freqs.weight' and swa_only:
+            # rope_freqs is only used by full-attention layers (proportional RoPE).
+            # In an all-SWA model, llama.cpp never calls create_tensor for it,
+            # which causes "expected N, got N-1" in done_getting_tensors.
+            skipped += 1
+            continue
         elif name == 'per_layer_token_embd.weight':
-            # Shape: [total_layers * per_layer_emb_dim, vocab_size] — slice axis 0
+            # GGUF shape: [n_layers*per_layer_dim, vocab_size] → numpy shape: (vocab_size, n_layers*stride)
+            # bf16 is stored as uint8 pairs so numpy stride may differ from per_layer_emb_dim.
+            # Compute stride from actual numpy axis size divided by total_blocks.
+            stride = tensor.data.shape[1] // total_blocks
             slices = []
             for old_idx in sorted(keep_layers):
-                start = old_idx * per_layer_emb_dim
-                slices.append(tensor.data[start:start + per_layer_emb_dim])
-            writer.add_tensor(name, np.concatenate(slices, axis=0), raw_dtype=tensor.tensor_type)
+                start = old_idx * stride
+                slices.append(tensor.data[:, start:start + stride])
+            writer.add_tensor(name, np.concatenate(slices, axis=1), raw_dtype=tensor.tensor_type)
             kept += 1
         elif name == 'per_layer_model_proj.weight':
-            # Shape: [embed_size, total_layers * per_layer_emb_dim] — slice axis 1
+            # GGUF shape: [embed_size, n_layers*per_layer_dim] → numpy shape: (n_layers*stride, embed_size)
+            stride = tensor.data.shape[0] // total_blocks
             slices = []
             for old_idx in sorted(keep_layers):
-                start = old_idx * per_layer_emb_dim
-                slices.append(tensor.data[:, start:start + per_layer_emb_dim])
-            writer.add_tensor(name, np.concatenate(slices, axis=1), raw_dtype=tensor.tensor_type)
+                start = old_idx * stride
+                slices.append(tensor.data[start:start + stride, :])
+            writer.add_tensor(name, np.concatenate(slices, axis=0), raw_dtype=tensor.tensor_type)
             kept += 1
         else:
             writer.add_tensor(name, tensor.data, raw_dtype=tensor.tensor_type)
