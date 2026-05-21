@@ -236,7 +236,7 @@ The implementation is fully open-source, cross-platform, and opt-in. Source code
 1. Gemma Team, Google DeepMind. *Gemma 4 Technical Report.* 2025.
 2. Ollama. *Ollama Go GGML Backend.* https://github.com/ollama/ollama. 2025.
 3. GGUF Specification. https://github.com/ggml-org/ggml/blob/master/docs/gguf.md. 2024.
-4. Google. *LiteRT-LM Gemma 4 weights.* https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm. 2025.
+4. Google. *LiteRT-LM Gemma 4 weights announced at Google I/O 2026.* https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm. May 20, 2026.
 5. ssfdre38. *Ollama SHA-256 verification PR #16087.* https://github.com/ollama/ollama/pull/16087. 2025.
 6. ggml-org/llama.cpp PR #23131 — ISWA null-buffer guard fix (Grey Liquid Labs). https://github.com/ggml-org/llama.cpp/pull/23131. 2026.
 
