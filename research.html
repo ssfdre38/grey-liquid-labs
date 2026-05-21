@@ -236,6 +236,29 @@ a{color:inherit;text-decoration:none}
       <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_002_DEPLOYMENT_GUIDE.md" target="_blank" class="paper-link">Read Full Paper ↗</a>
     </div>
 
+    <div class="paper-card featured">
+      <div class="paper-meta">
+        <span class="paper-num">PAPER #003</span>
+        <span class="paper-date">May 20, 2026</span>
+        <div class="paper-tags">
+          <span class="tag">Memory</span>
+          <span class="tag cyan">Inference</span>
+          <span class="tag green">Optimization</span>
+        </div>
+      </div>
+      <h3>Memory-Mapped Embedding Tensors: Achieving Sub-1.5 GB RAM for Gemma 4 on x86 Hardware</h3>
+      <p>We implement memory-mapped embedding tensor loading in Ollama's Go GGML backend, reducing Gemma 4 nano working-set RAM from <strong>3,475 MB to 1,366 MB</strong> — a 61% reduction. This matches Google DeepMind's LiteRT-LM headline target on standard x86 hardware with a verified, open-source implementation. Re-quantization of embedding tensors (Q2_K/Q4_K variants) is evaluated as an alternative and rejected for GPU users due to VRAM scheduler interaction that increases RAM and reduces throughput by ~30 t/s.</p>
+      <div style="margin-top:14px;padding:14px;background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.2);border-radius:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:0.83rem">
+        <div><span style="color:var(--text-dim)">Stock RAM:</span> <code style="color:#f87171;font-family:'JetBrains Mono',monospace">3,475 MB</code></div>
+        <div><span style="color:var(--text-dim)">mmap RAM:</span> <code style="color:var(--green);font-family:'JetBrains Mono',monospace">1,366 MB ✅</code></div>
+        <div><span style="color:var(--text-dim)">Reduction:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">−61%</code></div>
+        <div><span style="color:var(--text-dim)">LiteRT-LM target:</span> <code style="color:var(--purple-light);font-family:'JetBrains Mono',monospace">&lt;1,500 MB (unverified)</code></div>
+        <div><span style="color:var(--text-dim)">Platform:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">x86 + Windows/Unix</code></div>
+        <div><span style="color:var(--text-dim)">Inference:</span> <code style="color:var(--green);font-family:'JetBrains Mono',monospace">Correct ✅</code></div>
+      </div>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_003_MMAP_EMBEDDINGS.md" target="_blank" class="paper-link" style="margin-top:18px;display:inline-flex">Read Full Paper ↗</a>
+    </div>
+
     <h4 style="font-size:1rem;font-weight:700;color:var(--text-muted);margin-top:32px;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.06em;font-size:0.8rem">Experiment Reports</h4>
     <div class="exp-grid">
       <div class="exp-card">
