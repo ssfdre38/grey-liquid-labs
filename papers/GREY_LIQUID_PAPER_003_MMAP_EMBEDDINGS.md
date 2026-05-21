@@ -41,7 +41,7 @@ Stock Ollama (and llama.cpp) loads all tensor data eagerly into RAM at startup. 
 
 ### 1.3 Google's LiteRT-LM Claim
 
-At Google I/O 2025, DeepMind published weights for a LiteRT-LM Gemma 4 variant (`litert-community/gemma-4-E2B-it-litert-lm`, 2.58 GB) and claimed "<1.5 GB RAM" at runtime. As of May 2026:
+At Google I/O 2026, DeepMind published weights for a LiteRT-LM Gemma 4 variant (`litert-community/gemma-4-E2B-it-litert-lm`, 2.58 GB) and claimed "<1.5 GB RAM" at runtime. As of May 2026:
 - No working runtime has been released
 - `gemma.cpp` supports only Gemma 2
 - No paper, no reproducible benchmarks
