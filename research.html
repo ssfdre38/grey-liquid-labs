@@ -215,6 +215,27 @@ a{color:inherit;text-decoration:none}
 
     <div class="paper-card featured">
       <div class="paper-meta">
+        <span class="paper-num">PAPER #005</span>
+        <span class="paper-date">June 5, 2026</span>
+        <div class="paper-tags">
+          <span class="tag">Architecture</span>
+          <span class="tag cyan">Gemma 4</span>
+          <span class="tag green">Discovery</span>
+        </div>
+      </div>
+      <h3>The Hidden Architecture: Physically Distinct Sub-Networks in Gemma 4</h3>
+      <p>We document a significant discovery: Gemma 4 is not a uniform model, but embeds two physically incompatible sub-networks. SWA layers use half-sized Q/K projection tensors ([2560, 2048]) compared to full-attention layers ([2560, 4096]). Removing the 7 full-attention layers results in total semantic collapse, proving they act as a critical global integration backbone. This research also resulted in a core fix for llama.cpp (PR #23131).</p>
+      <div style="margin-top:14px;padding:14px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.2);border-radius:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:0.83rem">
+        <div><span style="color:var(--text-dim)">Backbone Layers:</span> <code style="color:var(--green);font-family:'JetBrains Mono',monospace">7 (Global)</code></div>
+        <div><span style="color:var(--text-dim)">SWA Layers:</span> <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace">35 (Local)</code></div>
+        <div><span style="color:var(--text-dim)">Tensor Scaling:</span> <code style="color:#f87171;font-family:'JetBrains Mono',monospace">0.5x (Local)</code></div>
+        <div><span style="color:var(--text-dim)">Bug Fix:</span> <code style="color:var(--purple-light);font-family:'JetBrains Mono',monospace">PR #23131 ✅</code></div>
+      </div>
+      <a href="https://github.com/ssfdre38/grey-liquid-labs/blob/main/papers/GREY_LIQUID_PAPER_005_HIDDEN_ARCHITECTURE.md" target="_blank" class="paper-link" style="margin-top:18px;display:inline-flex">Read Full Paper ↗</a>
+    </div>
+
+    <div class="paper-card featured">
+      <div class="paper-meta">
         <span class="paper-num">PAPER #001</span>
         <span class="paper-date">May 14–15, 2026</span>
         <div class="paper-tags">
