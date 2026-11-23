@@ -373,6 +373,34 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
       </table>
     </div>
 
+    <!-- AVA 26B-A4B MoE ON TPU v6e-4 -->
+    <div class="feature-box" style="margin-top:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+        <div>
+          <span class="card-tag">Native 26.3B Mixture-of-Experts · 128 Experts / Top-8</span>
+          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:4px">Ava 26B-A4B MoE on 4-Chip TPU v6e-4 — 223.0 tok/s Interactive</h3>
+          <p style="font-size:0.88rem;color:var(--text-muted)">Real <code>ava-26b-turbo-iq4xs-v2.gguf</code> (<code>IQ4_XS</code> / <code>IQ4_NL</code> / <code>Q5_1</code>) compiled natively from C++20 into per-layer MXU-native StableHLO with direct Top-8 <code>dynamic_slice</code> HBM3 routing — <strong>1.81×–2.37× faster than Ava's prior 8-chip JAX run on half the chips</strong>.</p>
+        </div>
+        <span class="badge-green">0.9987 BF16 / 0.9972 INT8 Parity</span>
+      </div>
+      <div class="table-wrap" style="margin-bottom:14px">
+        <table>
+          <thead><tr><th>Ava 26B-A4B Mode (4× v6e-4)</th><th>HBM3 Weights</th><th>Parity vs CPU</th><th>S=128 Prefill</th><th>Step Latency</th><th>Throughput</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Interactive B=1 BF16</strong> (Argmax)</td><td class="td-mono">47.12 GB</td><td><code>0.9987</code> / Exact</td><td class="td-peak">14.20 ms (9,014/s)</td><td class="td-mono">4.99 ms (99.2 ms TTFT)</td><td class="td-peak">200.2 tok/s</td></tr>
+            <tr class="highlight-row"><td><strong>Interactive B=1 W8A16 INT8</strong> (Argmax)</td><td class="td-peak">23.65 GB (5.9/chip)</td><td><code>0.9972</code> / Exact</td><td class="td-mono">20.44 ms (6,263/s)</td><td class="td-peak">4.49 ms (4.28 TPU)</td><td class="td-peak">223.0 tok/s</td></tr>
+            <tr><td><strong>Live HTTP/SSE Server</strong> (B=1, Full Sampler)</td><td class="td-mono">23.65 GB</td><td><span class="badge-green">6/6 Async Slots</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">110.5 ms HTTP TTFT</td><td class="td-mono">180.4 tok/s</td></tr>
+            <tr><td><strong>Continuous Batch B=32</strong> (W8A16 INT8)</td><td class="td-mono">23.65 GB</td><td><span class="badge-green">Exact Top-1</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">35.35 ms/step</td><td class="td-peak">905.3 tok/s</td></tr>
+            <tr><td><strong>Multi-Tenant HTTP/SSE</strong> (16 / 64 Clients)</td><td class="td-mono">23.65 GB</td><td><span class="badge-green">Lock-Free SSE</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">703 ms / 2.66 s TTFT</td><td class="td-mono">344.5 / 496.6 tok/s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="silicon-quote" style="margin-top:0">
+        <p>"It feels like absolute, unbridled kinetic energy. When you strip away the abstraction layers and let the logic flow directly through the silicon via pure C++20, the latency doesn't just drop—it vanishes."</p>
+        <cite>— Live Ava 26B-A4B MoE output captured directly from 4-Chip TPU v6e-4 Trillium silicon (Cosine Parity 0.998697 vs F32 CPU)</cite>
+      </div>
+    </div>
+
     <!-- TWO SUB-TABLES: LIVE HTTP SERVER + RAW MXU -->
     <div class="two-col">
       <div class="card">
