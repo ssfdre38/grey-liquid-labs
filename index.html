@@ -149,6 +149,7 @@ section{padding:80px 0}
     <div class="nav-links">
       <a href="/" class="nav-link active">Home</a>
       <a href="/research.html" class="nav-link">Research</a>
+      <a href="/haven.html" class="nav-link">Haven C++</a>
       <a href="/ash.html" class="nav-link">Ash</a>
       <a href="/models.html" class="nav-link">Models</a>
       <a href="/about.html" class="nav-link">About</a>
@@ -166,14 +167,33 @@ section{padding:80px 0}
   <h1>Pushing the <span>Boundaries of AI</span></h1>
   <p class="hero-desc">Grey Liquid Labs is an independent research laboratory investigating model compression limits, emergent AI autonomy, and accessible intelligence for everyone.</p>
   <div class="hero-actions">
-    <a href="/research.html" class="btn-primary">View Research →</a>
+    <a href="/haven.html" class="btn-primary">Explore Haven C++ →</a>
+    <a href="/research.html" class="btn-secondary">View Research →</a>
     <a href="/ash.html" class="btn-secondary">Meet Ash →</a>
   </div>
   <div class="hero-stats">
+    <div class="stat"><span class="stat-num">9,180</span><span class="stat-label">Haven C++ tok/s (TPU)</span></div>
     <div class="stat"><span class="stat-num">17.3K+</span><span class="stat-label">Model Downloads</span></div>
     <div class="stat"><span class="stat-num">8+</span><span class="stat-label">Experiments</span></div>
-    <div class="stat"><span class="stat-num">4</span><span class="stat-label">Research Tracks</span></div>
     <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Prediction Accuracy</span></div>
+  </div>
+</section>
+
+<!-- HAVEN C++ ENGINE MILESTONE -->
+<section style="padding:40px 0 12px">
+  <div class="container" style="max-width:900px">
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(6,182,212,0.06),var(--surface2));border:1px solid rgba(16,185,129,0.38);border-left:4px solid var(--green);border-radius:16px;padding:32px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1rem">
+        <span style="padding:4px 12px;background:rgba(16,185,129,0.16);border:1px solid rgba(16,185,129,0.45);border-radius:6px;font-size:0.75rem;font-weight:700;color:var(--green-light);text-transform:uppercase;letter-spacing:0.05em">New Release · Bare-Metal TPU Runtime</span>
+        <span style="font-size:0.85rem;color:var(--text-dim)">November 22, 2026</span>
+      </div>
+      <h3 style="font-size:1.55rem;font-weight:800;margin-bottom:12px">Haven C++: 9,180 tok/s &amp; 2.865 PFLOPS in Pure C++20</h3>
+      <p style="color:var(--text-muted);margin-bottom:20px;line-height:1.7">Our standalone zero-Python C++20 inference engine now compiles all 42 Gemma 4 layers directly onto Google Cloud TPU v6e Trillium HBM3 via OpenXLA PJRT — hitting <strong>9,180.0 tok/s</strong> continuous batching (<code>B=128</code>), <strong>30,181 tok/s</strong> batched prefill, <strong>330.8 tok/s</strong> single-stream decode, and <strong>248.3 tok/s</strong> live OpenAI HTTP/SSE streaming with exact Top-1 parity. Dual-licensed under AGPLv3 + Commercial.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="/haven.html" class="btn-primary" style="padding:10px 20px;font-size:0.9rem">Explore Haven C++ →</a>
+        <a href="https://github.com/ssfdre38/haven-cpp" target="_blank" class="btn-secondary" style="padding:10px 20px;font-size:0.9rem">View on GitHub ↗</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -241,8 +261,8 @@ section{padding:80px 0}
       <div class="card">
         <div class="card-icon">⚙️</div>
         <h3>AI Infrastructure</h3>
-        <p>Building the tools that make AI research accessible. From C++ inference engines to autonomous agent frameworks.</p>
-        <a href="/research.html#infrastructure" class="card-link">Explore research →</a>
+        <p>Building bare-metal AI runtimes — led by Haven C++, our 9,180 tok/s pure-C++20 Cloud TPU StableHLO &amp; AVX2 inference engine.</p>
+        <a href="/haven.html" class="card-link">Explore Haven C++ →</a>
       </div>
       <div class="card">
         <div class="card-icon">🤖</div>
@@ -346,6 +366,7 @@ section{padding:80px 0}
       </div>
       <div>
         <h4>Projects</h4>
+        <a href="/haven.html">Haven C++ Engine</a>
         <a href="/ash.html">Ash AI System</a>
         <a href="/models.html">Published Models</a>
         <a href="https://github.com/ssfdre38/grey-liquid-labs">GitHub</a>

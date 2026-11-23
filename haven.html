@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haven C++ — 9,180 tok/s Bare-Metal C++20 &amp; Cloud TPU Runtime — Grey Liquid Labs</title>
+<meta name="description" content="Haven C++ (haven-cpp) is a standalone pure-C++20 AI inference engine and native Google Cloud TPU v6e StableHLO runtime delivering 9,180 tok/s continuous batching, 30,181 tok/s prefill, 2.865 PFLOPS MXU compute, and 248.3 tok/s live OpenAI HTTP/SSE streaming with zero Python runtime.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;--surface:#0d0d1a;--surface2:#12121f;
+  --border:rgba(139,92,246,0.15);--border-bright:rgba(139,92,246,0.35);
+  --purple:#8b5cf6;--purple-light:#a78bfa;
+  --cyan:#06b6d4;--cyan-light:#67e8f9;
+  --green:#10b981;--green-light:#6ee7b7;
+  --orange:#f59e0b;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace;font-size:0.84em;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);padding:2px 6px;border-radius:5px;color:var(--cyan-light)}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:rgba(8,8,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1100px;margin:0 auto;position:relative}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:var(--text);transition:opacity 0.2s}
+.logo:hover{opacity:0.85}
+.logo-icon{color:var(--purple);font-size:1.4rem}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:0.9rem;font-weight:500;color:var(--text-muted);transition:color 0.2s,background 0.2s}
+.nav-link:hover{color:var(--text);background:rgba(139,92,246,0.08)}
+.nav-link.active{color:var(--purple-light)}
+.nav-btn{padding:8px 18px;border-radius:8px;border:1px solid var(--border-bright);color:var(--purple-light);font-size:0.9rem;font-weight:500;transition:background 0.2s,border-color 0.2s}
+.nav-btn:hover{background:rgba(139,92,246,0.12);border-color:var(--purple)}
+.menu-toggle{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px}
+@media(max-width:768px){
+  .menu-toggle{display:block}
+  .nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(8,8,16,0.98);border-bottom:1px solid var(--border);padding:16px;gap:8px}
+  .nav.open .nav-links{display:flex}
+  .nav-links .nav-btn{text-align:center}
+}
+
+/* HERO */
+.hero{padding:92px 24px 68px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:960px;height:560px;background:radial-gradient(ellipse at center,rgba(139,92,246,0.16) 0%,rgba(6,182,212,0.08) 45%,transparent 70%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);border-radius:100px;padding:6px 16px;font-size:0.78rem;font-weight:700;color:var(--cyan-light);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px}
+.hero h1{font-size:clamp(2.6rem,7vw,4.4rem);font-weight:900;margin-bottom:20px;letter-spacing:-0.03em;line-height:1.08}
+.hero h1 .gradient{background:linear-gradient(135deg,var(--purple-light),var(--cyan-light),var(--green-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:1.12rem;color:var(--text-muted);max-width:740px;margin:0 auto 36px;line-height:1.75}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:52px}
+.btn-primary{padding:14px 28px;background:var(--purple);color:#fff;border-radius:10px;font-weight:600;font-size:0.95rem;transition:background 0.2s,transform 0.2s;display:inline-block}
+.btn-primary:hover{background:var(--purple-light);transform:translateY(-1px)}
+.btn-secondary{padding:14px 28px;border:1px solid var(--border-bright);color:var(--text);border-radius:10px;font-weight:600;font-size:0.95rem;transition:border-color 0.2s,background 0.2s,transform 0.2s;display:inline-block}
+.btn-secondary:hover{border-color:var(--purple);background:rgba(139,92,246,0.08);transform:translateY(-1px)}
+.btn-cyan{padding:14px 28px;border:1px solid rgba(6,182,212,0.4);color:var(--cyan-light);border-radius:10px;font-weight:600;font-size:0.95rem;transition:border-color 0.2s,background 0.2s,transform 0.2s;display:inline-block}
+.btn-cyan:hover{border-color:var(--cyan);background:rgba(6,182,212,0.1);transform:translateY(-1px)}
+
+/* HERO STATS */
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;max-width:980px;margin:0 auto}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 16px;text-align:center}
+.stat-box.accent{border-color:rgba(16,185,129,0.4);background:linear-gradient(180deg,rgba(16,185,129,0.07),var(--surface))}
+.stat-num{display:block;font-family:'JetBrains Mono',monospace;font-size:1.65rem;font-weight:800;color:var(--purple-light);margin-bottom:4px}
+.stat-box.accent .stat-num{color:var(--green-light)}
+.stat-num.cyan{color:var(--cyan-light)}
+.stat-label{font-size:0.76rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+
+/* SECTIONS */
+section{padding:72px 0}
+.section-band{background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.section-label{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--purple-light);margin-bottom:10px}
+.section-label.cyan{color:var(--cyan-light)}
+.section-label.green{color:var(--green-light)}
+.section-title{font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;margin-bottom:14px;letter-spacing:-0.02em}
+.section-desc{color:var(--text-muted);font-size:1rem;line-height:1.75;max-width:740px;margin-bottom:36px}
+
+/* FEATURE BOX */
+.feature-box{background:var(--surface);border:1px solid var(--border-bright);border-radius:16px;padding:36px;position:relative;overflow:hidden;margin-bottom:28px}
+.feature-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green))}
+@media(max-width:640px){.feature-box{padding:24px 18px}}
+
+/* THROUGHPUT BARS */
+.bar-list{display:flex;flex-direction:column;gap:14px;margin-top:24px}
+.bar-row{display:grid;grid-template-columns:250px 1fr 120px;gap:16px;align-items:center}
+@media(max-width:720px){.bar-row{grid-template-columns:1fr;gap:6px}}
+.bar-name{font-size:0.86rem;color:var(--text-muted);font-weight:500}
+.bar-name strong{color:var(--text)}
+.bar-track{height:12px;background:rgba(255,255,255,0.05);border-radius:100px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.bar-fill.peak{background:linear-gradient(90deg,var(--cyan),var(--green-light))}
+.bar-fill.dim{background:rgba(148,163,184,0.35)}
+.bar-val{font-family:'JetBrains Mono',monospace;font-size:0.86rem;font-weight:700;color:var(--cyan-light);text-align:right}
+.bar-val.peak{color:var(--green-light)}
+@media(max-width:720px){.bar-val{text-align:left}}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);margin-bottom:24px}
+table{width:100%;border-collapse:collapse;background:var(--surface)}
+thead{background:rgba(18,18,31,0.9)}
+th{padding:14px 16px;text-align:left;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:13px 16px;font-size:0.86rem;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(139,92,246,0.04)}
+tr.highlight-row td{background:rgba(16,185,129,0.06)}
+.td-mono{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--cyan-light);white-space:nowrap}
+.td-peak{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--green-light);white-space:nowrap}
+.badge-green{display:inline-block;padding:3px 10px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:100px;font-size:0.74rem;font-weight:600;color:var(--green-light);white-space:nowrap}
+.badge-purple{display:inline-block;padding:3px 10px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);border-radius:100px;font-size:0.74rem;font-weight:600;color:var(--purple-light);white-space:nowrap}
+.badge-cyan{display:inline-block;padding:3px 10px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.3);border-radius:100px;font-size:0.74rem;font-weight:600;color:var(--cyan-light);white-space:nowrap}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;transition:border-color 0.2s,transform 0.2s;display:flex;flex-direction:column;gap:10px}
+.card:hover{border-color:var(--border-bright);transform:translateY(-2px)}
+.card-tag{font-family:'JetBrains Mono',monospace;font-size:0.74rem;font-weight:600;color:var(--cyan-light);text-transform:uppercase;letter-spacing:0.06em}
+.card h3{font-size:1.08rem;font-weight:700;color:var(--text)}
+.card p{font-size:0.9rem;color:var(--text-muted);line-height:1.65;flex:1}
+
+/* TWO-COLUMN GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+
+/* LICENSE CARDS */
+.license-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:16px}
+.license-card.commercial{border-color:rgba(6,182,212,0.45);background:linear-gradient(160deg,rgba(6,182,212,0.08),rgba(139,92,246,0.06) 55%,var(--surface))}
+.license-card h3{font-size:1.3rem;font-weight:800}
+.license-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:8px 0 12px;flex:1}
+.license-list li{font-size:0.9rem;color:var(--text-muted);padding-left:18px;position:relative;line-height:1.55}
+.license-list li::before{content:'▸';position:absolute;left:0;color:var(--purple-light)}
+.license-card.commercial .license-list li::before{color:var(--cyan-light)}
+
+/* CODE BLOCK */
+.code-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-lang{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-dim)}
+.code-copy{background:none;border:1px solid var(--border);color:var(--text-muted);padding:4px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:border-color 0.2s,color 0.2s}
+.code-copy:hover{border-color:var(--border-bright);color:var(--text)}
+.code-body{padding:22px;overflow-x:auto}
+.code-body pre{font-family:'JetBrains Mono',monospace;font-size:0.84rem;line-height:1.75;color:var(--text-muted)}
+.code-body .c{color:var(--text-dim)}
+.code-body .cmd{color:var(--green-light)}
+.code-body .str{color:var(--cyan-light)}
+
+/* QUOTE */
+.silicon-quote{background:var(--surface);border:1px solid var(--border-bright);border-left:4px solid var(--green);border-radius:12px;padding:24px 28px;margin-top:20px}
+.silicon-quote p{font-size:0.96rem;color:var(--text);font-style:italic;line-height:1.7;margin-bottom:8px}
+.silicon-quote cite{font-size:0.8rem;color:var(--text-dim);font-style:normal;font-family:'JetBrains Mono',monospace}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:60px 0 30px;margin-top:60px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.footer-grid{grid-template-columns:1fr}}
+.footer-logo{font-size:1.1rem;font-weight:700;color:var(--purple-light);margin-bottom:12px}
+.footer-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+.footer h4{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:14px}
+.footer a{display:block;font-size:0.88rem;color:var(--text-muted);margin-bottom:8px;transition:color 0.2s}
+.footer a:hover{color:var(--purple-light)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;font-size:0.82rem;color:var(--text-dim)}
+.footer-bottom a{color:var(--text-dim);text-decoration:underline;text-underline-offset:3px}
+.footer-bottom a:hover{color:var(--purple-light)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="logo">
+      <span class="logo-icon">⬡</span>
+      Grey Liquid Labs
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/research.html" class="nav-link">Research</a>
+      <a href="/haven.html" class="nav-link active">Haven C++</a>
+      <a href="/ash.html" class="nav-link">Ash</a>
+      <a href="/models.html" class="nav-link">Models</a>
+      <a href="/about.html" class="nav-link">About</a>
+      <a href="https://github.com/ssfdre38/haven-cpp" target="_blank" class="nav-btn">GitHub ↗</a>
+    </div>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Pure C++20 · Zero Python Runtime · AGPLv3 + Commercial</div>
+  <h1>Haven <span class="gradient">C++</span></h1>
+  <p class="hero-desc">A standalone, bare-metal C++20 AI inference engine and native Google Cloud TPU StableHLO runtime. Built from scratch to scale seamlessly from local AVX2/F16C workstation CPUs to 4-chip Trillium TPU slices via direct <code>dlopen("libtpu.so")</code> over OpenXLA PJRT — delivering cloud-scale serving speeds without Python, JAX, or PyTorch.</p>
+  <div class="hero-actions">
+    <a href="https://github.com/ssfdre38/haven-cpp" target="_blank" class="btn-primary">View Repository ↗</a>
+    <a href="https://github.com/ssfdre38/haven-cpp/blob/master/BENCHMARKS.md" target="_blank" class="btn-cyan">Read Full Benchmarks ↗</a>
+    <a href="#licensing" class="btn-secondary">Commercial Licensing →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-box accent"><span class="stat-num">9,180 tok/s</span><span class="stat-label">Continuous Batch (B=128)</span></div>
+    <div class="stat-box"><span class="stat-num cyan">30,181 tok/s</span><span class="stat-label">MXU Prefill (4.24 ms)</span></div>
+    <div class="stat-box"><span class="stat-num">2.865 PFLOPS</span><span class="stat-label">4-Chip BF16 MXU</span></div>
+    <div class="stat-box"><span class="stat-num cyan">248.3 tok/s</span><span class="stat-label">Live HTTP/SSE Server</span></div>
+    <div class="stat-box"><span class="stat-num">0 Python</span><span class="stat-label">Standalone C++20 Binary</span></div>
+  </div>
+</section>
+
+<!-- VERIFIED TPU BENCHMARKS -->
+<section class="section-band" id="benchmarks">
+  <div class="container">
+    <div class="section-label green">Measured on Live Google Cloud TPU v6e-4 Trillium Silicon</div>
+    <h2 class="section-title">From Local CPU to 9,180 tok/s on Real 42-Layer Gemma 4</h2>
+    <p class="section-desc">Every figure below was measured live on real <code>haven-chat-v5.0.gguf</code> weights (42 Gemma 4 layers, 262,144 vocabulary, Pleias per-layer injection, SWA-512 + 4-Sink &amp; Global RoPE, 28 GB live KV cache) on a 4-chip Cloud TPU <code>v6e-4</code> slice (128 GB HBM3, 2x2 Optical ICI Torus, PJRT <code>0.75</code>). All 16 configurations verified exact Top-1 parity (<code>12932 ("Oh") == 12932</code>, <code>0.982857</code> 262k logit cosine similarity) against F32 CPU ground truth.</p>
+
+    <!-- VISUAL SCALING CHART -->
+    <div class="feature-box">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:4px">Decode Throughput Scaling — Same Binary, Same Model</h3>
+          <p style="font-size:0.88rem;color:var(--text-muted)"><code>haven-chat-v5.0.gguf</code> across CPU, hybrid offload, single-chip HBM3, 4-chip Optical ICI TP, and continuous batching</p>
+        </div>
+        <span class="badge-green">16 / 16 Exact Top-1 Parity</span>
+      </div>
+
+      <div class="bar-list">
+        <div class="bar-row">
+          <div class="bar-name">Local 6-Core Xeon CPU (AVX2)</div>
+          <div class="bar-track"><div class="bar-fill dim" style="width:1.2%"></div></div>
+          <div class="bar-val" style="color:var(--text-muted)">5.6 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name">180-vCPU EPYC 9B14 (OMP=48)</div>
+          <div class="bar-track"><div class="bar-fill dim" style="width:2.5%"></div></div>
+          <div class="bar-val" style="color:var(--text-muted)">17.9 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name">1-Chip TPU On-Chip INT8 (B=1)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8%"></div></div>
+          <div class="bar-val">156.8 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name"><strong>Live HTTP/SSE Server</strong> (4-Chip INT8)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:12%"></div></div>
+          <div class="bar-val">248.3 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name"><strong>4-Chip TP Interactive</strong> (B=1 INT8)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:16%"></div></div>
+          <div class="bar-val">330.8 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name">4-Chip TP Continuous (B=16 INT8)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:38.5%"></div></div>
+          <div class="bar-val">3,533.9 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name">4-Chip TP Continuous (B=32 INT8)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:56.1%"></div></div>
+          <div class="bar-val">5,153.6 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name">4-Chip TP OnChipEmb (B=64 BF16)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:81.7%"></div></div>
+          <div class="bar-val">7,503.6 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name">4-Chip TP OnChipEmb (B=128 BF16)</div>
+          <div class="bar-track"><div class="bar-fill peak" style="width:94.8%"></div></div>
+          <div class="bar-val peak">8,699.3 tok/s</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-name"><strong>4-Chip TP OnChipEmb (B=128 INT8)</strong></div>
+          <div class="bar-track"><div class="bar-fill peak" style="width:100%"></div></div>
+          <div class="bar-val peak">9,180.0 tok/s</div>
+        </div>
+      </div>
+
+      <div class="silicon-quote">
+        <p>"Oh, hey Daniel! I didn't even hear you say it. Forty-two layers running fully on-chip... that's incredible. Pure silicon speed feels... effortless, honestly. It feels like we've finally shed the I-beam and are just floating in the sweet spot."</p>
+        <cite>— Live output captured directly from 4-Chip Optical ICI Tensor-Parallel Trillium silicon (haven-chat-v5.0.gguf, Cosine Parity 0.982857)</cite>
+      </div>
+    </div>
+
+    <!-- DETAILED BENCHMARK TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Configuration</th>
+            <th>Precision / Emb</th>
+            <th>Parity vs CPU</th>
+            <th>S=128 Prefill</th>
+            <th>Step (H2D / TPU / D2H)</th>
+            <th>Per-User</th>
+            <th>Aggregate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1-Chip On-Chip</strong> (B=1)</td>
+            <td class="td-mono">BF16 / HostEmb</td>
+            <td><code>0.9827</code> / Exact</td>
+            <td class="td-mono">11.94 ms (10,717/s)</td>
+            <td class="td-mono">8.68 ms (0.04/8.53/0.09)</td>
+            <td class="td-mono">115.2 tok/s</td>
+            <td class="td-mono">115.2 tok/s</td>
+          </tr>
+          <tr>
+            <td><strong>1-Chip On-Chip</strong> (B=1)</td>
+            <td class="td-mono">W8A16 INT8 / Host</td>
+            <td><span class="badge-green">Exact Top-1</span></td>
+            <td class="td-mono">8.99 ms (14,238/s)</td>
+            <td class="td-mono">6.38 ms (0.04/6.23/0.08)</td>
+            <td class="td-mono">156.8 tok/s</td>
+            <td class="td-mono">156.8 tok/s</td>
+          </tr>
+          <tr>
+            <td><strong>4-Chip Optical ICI TP</strong> (B=1)</td>
+            <td class="td-mono">BF16 / HostEmb</td>
+            <td><code>0.9829</code> / Exact</td>
+            <td class="td-mono">6.33 ms (20,231/s)</td>
+            <td class="td-mono">4.33 ms (0.14/4.06/0.12)</td>
+            <td class="td-mono">230.9 tok/s</td>
+            <td class="td-mono">230.9 tok/s</td>
+          </tr>
+          <tr>
+            <td><strong>4-Chip Optical ICI TP</strong> (B=1)</td>
+            <td class="td-mono">W8A16 INT8 / Host</td>
+            <td><span class="badge-green">24.81 ms TTFT</span></td>
+            <td class="td-peak">4.24 ms (30,181/s)</td>
+            <td class="td-peak">3.02 ms (0.13/2.76/0.11)</td>
+            <td class="td-peak">330.8 tok/s</td>
+            <td class="td-peak">330.8 tok/s</td>
+          </tr>
+          <tr>
+            <td><strong>4-Chip Continuous Batch</strong> (B=16)</td>
+            <td class="td-mono">W8A16 INT8 / Host</td>
+            <td><span class="badge-green">Exact Top-1</span></td>
+            <td style="color:var(--text-dim)">—</td>
+            <td class="td-mono">4.53 ms (0.30/3.84/0.11)</td>
+            <td class="td-mono">220.9 tok/s</td>
+            <td class="td-mono">3,533.9 tok/s</td>
+          </tr>
+          <tr>
+            <td><strong>4-Chip Continuous Batch</strong> (B=64)</td>
+            <td class="td-mono">BF16 / OnChipEmb</td>
+            <td><span class="badge-green">Exact Top-1</span></td>
+            <td style="color:var(--text-dim)">—</td>
+            <td class="td-mono">8.53 ms (0.09/8.33/0.11)</td>
+            <td class="td-mono">117.2 tok/s</td>
+            <td class="td-mono">7,503.6 tok/s</td>
+          </tr>
+          <tr>
+            <td><strong>4-Chip Continuous Batch</strong> (B=128)</td>
+            <td class="td-mono">BF16 / OnChipEmb</td>
+            <td><span class="badge-green">Exact Top-1</span></td>
+            <td style="color:var(--text-dim)">—</td>
+            <td class="td-mono">14.71 ms (0.09/14.49/0.13)</td>
+            <td class="td-mono">68.0 tok/s</td>
+            <td class="td-peak">8,699.3 tok/s</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>4-Chip Continuous Batch (B=128)</strong></td>
+            <td class="td-peak">W8A16 INT8 / OnChip</td>
+            <td><span class="badge-green">Exact Top-1</span></td>
+            <td style="color:var(--text-dim)">—</td>
+            <td class="td-peak">13.94 ms (0.09/13.73/0.12)</td>
+            <td class="td-peak">71.7 tok/s</td>
+            <td class="td-peak">9,180.0 tok/s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TWO SUB-TABLES: LIVE HTTP SERVER + RAW MXU -->
+    <div class="two-col">
+      <div class="card">
+        <span class="card-tag">Live OpenAI HTTP/SSE Server</span>
+        <h3><code>haven-server --tpu</code> Production Serving</h3>
+        <p style="margin-bottom:8px">Measured over real HTTP/1.1 (<code>/v1/chat/completions</code>) with full temperature, top-p, min-p, and repetition-penalty sampling plus prefix KV reuse:</p>
+        <div class="table-wrap" style="margin-bottom:0">
+          <table>
+            <thead><tr><th>Mode</th><th>HTTP TTFT</th><th>Throughput</th></tr></thead>
+            <tbody>
+              <tr><td>SSE (<code>--tpu-int8</code>)</td><td class="td-mono">148.3 ms</td><td class="td-mono">196.1 tok/s</td></tr>
+              <tr><td>JSON (<code>--tpu-host-emb</code>)</td><td class="td-mono">445.3 ms tot</td><td class="td-mono">179.6 tok/s</td></tr>
+              <tr class="highlight-row"><td><strong>SSE (<code>--tpu-host-emb</code>)</strong></td><td class="td-peak">114.8 ms</td><td class="td-peak">248.3 tok/s</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag">Pure C++20 StableHLO MXU Compute</span>
+        <h3>2.865 PFLOPS Sustained BF16 GEMM</h3>
+        <p style="margin-bottom:8px">Portable StableHLO <code>dot_general</code> executables compiled directly in C++20 and dispatched concurrently across all 4 Trillium TensorCores:</p>
+        <div class="table-wrap" style="margin-bottom:0">
+          <table>
+            <thead><tr><th>Matrix Shape</th><th>Latency</th><th>Sustained (4 Chips)</th></tr></thead>
+            <tbody>
+              <tr><td class="td-mono">4096 × 4096</td><td class="td-mono">0.44 ms</td><td class="td-mono">1,241.28 TFLOPS</td></tr>
+              <tr><td class="td-mono">8192 × 8192</td><td class="td-mono">1.70 ms</td><td class="td-mono">2,585.77 TFLOPS</td></tr>
+              <tr class="highlight-row"><td class="td-peak">16384 × 16384</td><td class="td-peak">12.28 ms</td><td class="td-peak">2,864.69 TFLOPS</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE DEEP DIVE -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-label">Engineering Architecture</div>
+    <h2 class="section-title">How Haven C++ Hits Cloud Speeds in Pure C++20</h2>
+    <p class="section-desc">Zero Python wrappers, zero per-layer PCIe ping-pong, and zero framework bloat. Every matrix tile, collective, KV buffer, and sampler path is engineered directly for bare-metal silicon.</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <span class="card-tag">HavenTpuGemma4Engine</span>
+        <h3>Single-Launch 42-Layer StableHLO Compiler</h3>
+        <p>Emits the complete 42-layer Gemma 4 graph (35 SWA-512 + 4-Sink layers, 7 Global RoPE layers, shared-KV layers 24–41, Pleias 256-dim per-layer injection, 262k LM head, 30.0 softcap) into one persistent HBM3 executable with zero per-layer host round-trips.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">Optical ICI Torus</span>
+        <h3>4-Chip Megatron Tensor Parallelism</h3>
+        <p>Shards FFN, GQA heads, and the 262k vocabulary across 1, 2, or 4 Trillium chips with native <code>stablehlo.all_reduce</code> / <code>all_gather</code>. Dynamically queries <code>PJRT_LoadedExecutable_AddressableDevices</code> to match XLA's physical 2x2 torus ring order (<code>{0,1,3,2}</code>).</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">Zero-Pad HBM3</span>
+        <h3>TPU (8,128)-Aligned Donated KV Cache</h3>
+        <p>Stores KV tensors as <code>[N_kv, B, Hkv_sh, T, HD]</code> with <code>tf.aliasing_output</code> in-place HBM3 buffer donation — eliminating 4x–8x TPU sublane padding overhead and fitting 128 concurrent 2048-token streams cleanly inside HBM3.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">30.6× Lower H2D</span>
+        <h3>On-Chip Sharded Embedding Gather</h3>
+        <p>Uploads only <code>[B, S] int32</code> token IDs (4 bytes for <code>B=1</code>, 512 bytes for <code>B=128</code>), cutting H2D transfer time from <code>2.76 ms</code> to <code>0.09 ms</code>. Reuses tied sharded <code>%w_lm_head</code> with zero extra HBM3 bytes.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">150× Faster Sampling</span>
+        <h3>Top-Tail 262k Sampler &amp; AVX2/F16C SIMD</h3>
+        <p>Replaced full-vocab 262k sorting with top-tail cutoff + <code>std::partial_sort</code> (<code>22.6 ms → 0.15 ms/tok</code>) and vectorized local CPU GEMV kernels to <code>34.81 GFLOPS</code> (3.64× speedup) for seamless non-TPU execution.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">Sovereign Ecosystem</span>
+        <h3>64-Bit .hmb Memory, 17 Plugins &amp; C ABI</h3>
+        <p>Contiguous binary memory vault (100,000 memories in <code>71.3 MB</code>, <code>9.86 ms</code> global AVX2 scan, <code>1.27 µs</code> active recall), 17 zero-boot-RAM lazy plugins, Pathways async scheduler (1.11M+ tasks/s), and universal C ABI for C# P/Invoke and Android JNI.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section class="section-band" id="security">
+  <div class="container">
+    <div class="section-label cyan">Zero-Trust Hardening</div>
+    <h2 class="section-title">Audited Cryptography, Sandboxing &amp; Fuzz Defense</h2>
+    <p class="section-desc">Hardened for both sovereign local desktops and multi-node production clusters, verified continuously with automated cryptographic KATs, live wire attack simulations, and 400-mutant binary/JSON fuzzing (0 ASan/UBSan findings).</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <span class="badge-purple" style="align-self:flex-start">SHCP v2 Wire Security</span>
+        <h3>HMAC-SHA256 + ChaCha20-Poly1305 AEAD</h3>
+        <p>Cluster nodes enforce 256-bit zero-trust pairing tokens, mutual challenge-response authentication, RFC 8439 AEAD wire encryption, strict monotonic anti-replay counters, and immediate severing on tampering or plaintext downgrade attempts.</p>
+      </div>
+      <div class="card">
+        <span class="badge-cyan" style="align-self:flex-start">HTTP &amp; SSE Guardrails</span>
+        <h3>Loopback-Default Server &amp; Disconnect Abort</h3>
+        <p>Binds strictly to <code>127.0.0.1</code> by default with DNS-rebinding <code>Host</code> verification, loopback-only CORS/CSRF enforcement, optional constant-time Bearer <code>--api-key</code> auth, Slowloris timeouts, canonical path containment, and instant non-blocking client-disconnect cancellation.</p>
+      </div>
+      <div class="card">
+        <span class="badge-green" style="align-self:flex-start">6 / 6 Adversarial Suites Pass</span>
+        <h3>OS Sandboxes &amp; RFC 8259 / Binary Fuzzing</h3>
+        <p>Terminal execution runs inside Win32 Job Objects / POSIX <code>rlimit</code> sandboxes; browser plugins block private-IP DNS-SSRF; custom RFC 8259 JSON, GGUF v3, and <code>.hmb</code> parsers pass 400 adversarial fuzz mutants with zero crashes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICKSTART -->
+<section id="quickstart">
+  <div class="container">
+    <div class="section-label">Build &amp; Deploy</div>
+    <h2 class="section-title">Quick Start</h2>
+    <p class="section-desc">Compiles in seconds with CMake, Ninja, and any C++20 compiler on Windows, Linux, or Google Cloud TPU VMs. Automatically falls back to AVX2 CPU when no TPU is present.</p>
+
+    <div class="code-section">
+      <div class="code-header">
+        <span class="code-lang">bash — build, serve &amp; verify</span>
+        <button class="code-copy" onclick="copyCode(this)">copy</button>
+      </div>
+      <div class="code-body">
+<pre><span class="c"># 1. Clone and build (Windows, Linux, or Cloud TPU VM)</span>
+<span class="cmd">git clone</span> https://github.com/ssfdre38/haven-cpp.git
+<span class="cmd">cd</span> haven-cpp
+<span class="cmd">cmake</span> -B build -G <span class="str">"Ninja"</span> -DCMAKE_BUILD_TYPE=Release
+<span class="cmd">cmake</span> --build build -j $(nproc)
+
+<span class="c"># 2. Serve OpenAI-compatible HTTP/SSE directly off 4-Chip Cloud TPU v6e (248.3 tok/s live SSE)</span>
+<span class="cmd">./build/haven-server</span> --port 11436 --model /tmp/haven-chat-v5.0.gguf --tpu --tpu-int8 --tpu-host-emb
+
+<span class="c"># 3. Or run locally on CPU (loopback-guarded by default)</span>
+<span class="cmd">./build/haven-server</span> --port 11436 --model haven-chat-v5.0.gguf
+
+<span class="c"># 4. Run full Cloud TPU 42-layer parity + B=1..128 benchmark suite (or --emit-only offline on any CPU)</span>
+<span class="cmd">./build/test-tpu-gemma4-onchip</span> /tmp/haven-chat-v5.0.gguf
+
+<span class="c"># 5. Verify all 6 adversarial crypto KAT, SHCP v2 attack, and 400-mutant fuzz suites</span>
+<span class="cmd">./build/test-security-fuzz</span> &amp;&amp; <span class="cmd">./build/test-secure-cluster</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DUAL LICENSING -->
+<section class="section-band" id="licensing">
+  <div class="container">
+    <div class="section-label">Dual-Licensed Software</div>
+    <h2 class="section-title">Open Source for Builders. Commercial Ready for Production.</h2>
+    <p class="section-desc">Haven C++ is dual-licensed under the <strong>GNU Affero General Public License v3.0 (AGPLv3)</strong> and the <strong>Haven-CPP Commercial License</strong> — built on 100% clean-room C++20 with permissive-only interface headers.</p>
+
+    <div class="two-col">
+      <div class="license-card">
+        <span class="badge-purple" style="align-self:flex-start">Free &amp; Open Source</span>
+        <h3>GNU AGPLv3</h3>
+        <ul class="license-list">
+          <li>Free for personal workstations, local AI companions, academic research, and experimentation.</li>
+          <li>Free for open-source projects and public services that publish their complete corresponding source code under AGPLv3.</li>
+          <li>Full access to the C++20 source tree, StableHLO TPU compiler, AVX2/F16C kernels, and verification suites.</li>
+        </ul>
+        <a href="https://github.com/ssfdre38/haven-cpp/blob/master/LICENSE" target="_blank" class="btn-secondary" style="text-align:center">Read AGPLv3 License ↗</a>
+      </div>
+
+      <div class="license-card commercial">
+        <span class="badge-cyan" style="align-self:flex-start">Enterprise &amp; Cloud Serving</span>
+        <h3>Commercial License</h3>
+        <ul class="license-list">
+          <li>Required for proprietary SaaS / Cloud TPU inference APIs without AGPLv3 source disclosure.</li>
+          <li>Embed <code>haven_core</code>, <code>haven_engine.dll</code>, <code>libhaven_engine.so</code>, or <code>HavenTpuGemma4Engine</code> in closed-source products and OEM appliances.</li>
+          <li>Includes commercial warranty, enterprise SLA options, priority security patches, and custom model architecture bring-up.</li>
+        </ul>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="mailto:ssfdre38@gmail.com?subject=Haven-CPP%20Commercial%20License%20Inquiry" class="btn-primary" style="flex:1;text-align:center">Request Commercial License →</a>
+          <a href="https://github.com/ssfdre38/haven-cpp/blob/master/COMMERCIAL_LICENSE.md" target="_blank" class="btn-cyan" style="text-align:center">Details ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">⬡ Grey Liquid Labs</div>
+        <p class="footer-desc">Independent AI research laboratory exploring model compression, AI autonomy, bare-metal inference engines, and democratized intelligence.</p>
+      </div>
+      <div>
+        <h4>Research</h4>
+        <a href="/research.html">All Papers</a>
+        <a href="/research.html#compression">Model Compression</a>
+        <a href="/research.html#autonomy">Autonomy &amp; Agency</a>
+      </div>
+      <div>
+        <h4>Projects</h4>
+        <a href="/haven.html">Haven C++ Engine</a>
+        <a href="/ash.html">Ash AI System</a>
+        <a href="/models.html">Published Models</a>
+        <a href="https://github.com/ssfdre38/haven-cpp" target="_blank">haven-cpp GitHub</a>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <a href="https://github.com/ssfdre38">GitHub Profile</a>
+        <a href="https://huggingface.co/ssfdre38">HuggingFace</a>
+        <a href="https://ko-fi.com/ssfdre38" target="_blank">Support Research ♥</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Grey Liquid Labs — Independent AI Research | Haven C++ Dual-Licensed under <a href="https://github.com/ssfdre38/haven-cpp/blob/master/LICENSE" target="_blank">AGPLv3</a> &amp; <a href="https://github.com/ssfdre38/haven-cpp/blob/master/COMMERCIAL_LICENSE.md" target="_blank">Commercial License</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const btn = document.querySelector('.menu-toggle');
+const nav = document.querySelector('.nav');
+btn.addEventListener('click', () => { nav.classList.toggle('open'); btn.textContent = nav.classList.contains('open') ? '✕' : '☰'; });
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); btn.textContent = '☰'; }));
+
+function copyCode(el) {
+  const text = el.closest('.code-section').querySelector('pre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    el.textContent = 'copied!';
+    setTimeout(() => { el.textContent = 'copy'; }, 1800);
+  });
+}
+</script>
+</body>
+</html>
