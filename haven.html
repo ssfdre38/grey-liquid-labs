@@ -199,9 +199,9 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
   </div>
   <div class="hero-stats">
     <div class="stat-box accent"><span class="stat-num">9,180 tok/s</span><span class="stat-label">Continuous Batch (B=128)</span></div>
-    <div class="stat-box"><span class="stat-num cyan">30,181 tok/s</span><span class="stat-label">MXU Prefill (4.24 ms)</span></div>
-    <div class="stat-box"><span class="stat-num">2.865 PFLOPS</span><span class="stat-label">4-Chip BF16 MXU</span></div>
-    <div class="stat-box"><span class="stat-num cyan">248.3 tok/s</span><span class="stat-label">Live HTTP/SSE Server</span></div>
+    <div class="stat-box"><span class="stat-num cyan">2,198 tok/s</span><span class="stat-label">64-Client Live HTTP/SSE</span></div>
+    <div class="stat-box"><span class="stat-num">30,181 tok/s</span><span class="stat-label">MXU Prefill (4.24 ms)</span></div>
+    <div class="stat-box"><span class="stat-num cyan">2.865 PFLOPS</span><span class="stat-label">4-Chip BF16 MXU</span></div>
     <div class="stat-box"><span class="stat-num">0 Python</span><span class="stat-label">Standalone C++20 Binary</span></div>
   </div>
 </section>
@@ -377,15 +377,16 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
     <div class="two-col">
       <div class="card">
         <span class="card-tag">Live OpenAI HTTP/SSE Server</span>
-        <h3><code>haven-server --tpu</code> Production Serving</h3>
-        <p style="margin-bottom:8px">Measured over real HTTP/1.1 (<code>/v1/chat/completions</code>) with full temperature, top-p, min-p, and repetition-penalty sampling plus prefix KV reuse:</p>
+        <h3><code>haven-server --tpu</code> Multi-Tenant Serving</h3>
+        <p style="margin-bottom:8px">Measured over real concurrent HTTP/1.1 SSE sockets (<code>/v1/chat/completions</code>) with lock-free continuous batching (<code>--tpu-batch</code>), async per-slot <code>pos_vec[B]</code>, and multi-bucket prefill:</p>
         <div class="table-wrap" style="margin-bottom:0">
           <table>
-            <thead><tr><th>Mode</th><th>HTTP TTFT</th><th>Throughput</th></tr></thead>
+            <thead><tr><th>Mode &amp; Clients</th><th>TTFT</th><th>Live HTTP SSE</th></tr></thead>
             <tbody>
-              <tr><td>SSE (<code>--tpu-int8</code>)</td><td class="td-mono">148.3 ms</td><td class="td-mono">196.1 tok/s</td></tr>
-              <tr><td>JSON (<code>--tpu-host-emb</code>)</td><td class="td-mono">445.3 ms tot</td><td class="td-mono">179.6 tok/s</td></tr>
-              <tr class="highlight-row"><td><strong>SSE (<code>--tpu-host-emb</code>)</strong></td><td class="td-peak">114.8 ms</td><td class="td-peak">248.3 tok/s</td></tr>
+              <tr><td>1 Client (<code>--tpu-host-emb</code>)</td><td class="td-mono">114.8 ms (62.6 ms T2)</td><td class="td-mono">248.3 tok/s</td></tr>
+              <tr><td>16 Clients (<code>--tpu-batch 16</code>, Full Sampler)</td><td class="td-mono">426.1 ms avg</td><td class="td-mono">661.0 tok/s</td></tr>
+              <tr><td>32 Clients (<code>--tpu-batch 32 --tpu-argmax</code>)</td><td class="td-mono">706.0 ms avg</td><td class="td-peak">2,006.3 tok/s</td></tr>
+              <tr class="highlight-row"><td><strong>64 Clients (<code>--tpu-batch 64 --tpu-argmax</code>)</strong></td><td class="td-mono">1,383 ms avg</td><td class="td-peak">2,198.5 tok/s</td></tr>
             </tbody>
           </table>
         </div>
@@ -419,14 +420,14 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
 
     <div class="cards-grid">
       <div class="card">
-        <span class="card-tag">HavenTpuGemma4Engine</span>
-        <h3>Single-Launch 42-Layer StableHLO Compiler</h3>
-        <p>Emits the complete 42-layer Gemma 4 graph (35 SWA-512 + 4-Sink layers, 7 Global RoPE layers, shared-KV layers 24–41, Pleias 256-dim per-layer injection, 262k LM head, 30.0 softcap) into one persistent HBM3 executable with zero per-layer host round-trips.</p>
+        <span class="card-tag">Model-General Compiler</span>
+        <h3>Multi-Architecture StableHLO Engine</h3>
+        <p>Compiles dense transformers directly from <code>ModelConfig</code> + GGUF tensors (<strong>Gemma 4/3/2, Llama 3/4, Qwen 2.5/3, Mistral, Phi-3/4, Ava 26B</strong>) into persistent HBM3 executables — CI-verified across 160 multi-arch graphs on Linux GCC &amp; Windows MSVC.</p>
       </div>
       <div class="card">
-        <span class="card-tag">Optical ICI Torus</span>
-        <h3>4-Chip Megatron Tensor Parallelism</h3>
-        <p>Shards FFN, GQA heads, and the 262k vocabulary across 1, 2, or 4 Trillium chips with native <code>stablehlo.all_reduce</code> / <code>all_gather</code>. Dynamically queries <code>PJRT_LoadedExecutable_AddressableDevices</code> to match XLA's physical 2x2 torus ring order (<code>{0,1,3,2}</code>).</p>
+        <span class="card-tag">Multi-Tenant Continuous Batching</span>
+        <h3>Async Per-Slot <code>pos_vec[B]</code> &amp; Scheduler</h3>
+        <p>Lock-free <code>TpuContinuousBatchScheduler</code> multiplexes up to 128 concurrent HTTP/SSE clients into shared HBM3 KV slots with in-place <code>stablehlo.scatter</code> decode and slot-targeted <code>S=128/32/16/8/1</code> prefill — verified 6/6 zero cross-slot leakage on <code>v6e-4</code>.</p>
       </div>
       <div class="card">
         <span class="card-tag">Zero-Pad HBM3</span>
@@ -498,14 +499,14 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
 <span class="cmd">cmake</span> -B build -G <span class="str">"Ninja"</span> -DCMAKE_BUILD_TYPE=Release
 <span class="cmd">cmake</span> --build build -j $(nproc)
 
-<span class="c"># 2. Serve OpenAI-compatible HTTP/SSE directly off 4-Chip Cloud TPU v6e (248.3 tok/s live SSE)</span>
-<span class="cmd">./build/haven-server</span> --port 11436 --model /tmp/haven-chat-v5.0.gguf --tpu --tpu-int8 --tpu-host-emb
+<span class="c"># 2. Serve single-user interactive (248.3 tok/s) OR multi-tenant continuous batching (2,198 tok/s live SSE)</span>
+<span class="cmd">./build/haven-server</span> --port 11436 --model /tmp/haven-chat-v5.0.gguf --tpu --tpu-int8 --tpu-batch 64 --tpu-argmax
 
 <span class="c"># 3. Or run locally on CPU (loopback-guarded by default)</span>
 <span class="cmd">./build/haven-server</span> --port 11436 --model haven-chat-v5.0.gguf
 
-<span class="c"># 4. Run full Cloud TPU 42-layer parity + B=1..128 benchmark suite (or --emit-only offline on any CPU)</span>
-<span class="cmd">./build/test-tpu-gemma4-onchip</span> /tmp/haven-chat-v5.0.gguf
+<span class="c"># 4. Run full Cloud TPU parity + B=1..128 suite (or --emit-only-synthetic offline on any CPU, zero GGUF)</span>
+<span class="cmd">./build/test-tpu-gemma4-onchip</span> --emit-only-synthetic &amp;&amp; <span class="cmd">./build/test-tpu-scheduler</span>
 
 <span class="c"># 5. Verify all 6 adversarial crypto KAT, SHCP v2 attack, and 400-mutant fuzz suites</span>
 <span class="cmd">./build/test-security-fuzz</span> &amp;&amp; <span class="cmd">./build/test-secure-cluster</span></pre>
