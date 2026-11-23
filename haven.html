@@ -97,7 +97,7 @@ section{padding:72px 0}
 @media(max-width:720px){.bar-val{text-align:left}}
 
 /* TABLES */
-.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);margin-bottom:24px}
+.table-wrap{overflow-x:auto;max-width:100%;border-radius:12px;border:1px solid var(--border);margin-bottom:24px}
 table{width:100%;border-collapse:collapse;background:var(--surface)}
 thead{background:rgba(18,18,31,0.9)}
 th{padding:14px 16px;text-align:left;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);border-bottom:1px solid var(--border);white-space:nowrap}
@@ -113,18 +113,21 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
 
 /* CARDS */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;transition:border-color 0.2s,transform 0.2s;display:flex;flex-direction:column;gap:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;transition:border-color 0.2s,transform 0.2s;display:flex;flex-direction:column;gap:10px;min-width:0}
 .card:hover{border-color:var(--border-bright);transform:translateY(-2px)}
 .card-tag{font-family:'JetBrains Mono',monospace;font-size:0.74rem;font-weight:600;color:var(--cyan-light);text-transform:uppercase;letter-spacing:0.06em}
 .card h3{font-size:1.08rem;font-weight:700;color:var(--text)}
-.card p{font-size:0.9rem;color:var(--text-muted);line-height:1.65;flex:1}
+.card p{font-size:0.9rem;color:var(--text-muted);line-height:1.65}
 
 /* TWO-COLUMN GRID */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:stretch}
+.two-col .table-wrap{margin-top:auto}
+.two-col th,.two-col td{padding:11px 12px;font-size:0.82rem}
+.two-col .td-mono,.two-col .td-peak{font-size:0.8rem}
+@media(max-width:960px){.two-col{grid-template-columns:minmax(0,1fr)}}
 
 /* LICENSE CARDS */
-.license-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:16px}
+.license-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:16px;min-width:0}
 .license-card.commercial{border-color:rgba(6,182,212,0.45);background:linear-gradient(160deg,rgba(6,182,212,0.08),rgba(139,92,246,0.06) 55%,var(--surface))}
 .license-card h3{font-size:1.3rem;font-weight:800}
 .license-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:8px 0 12px;flex:1}
@@ -411,10 +414,10 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
           <table>
             <thead><tr><th>Mode &amp; Clients</th><th>TTFT</th><th>Live HTTP SSE</th></tr></thead>
             <tbody>
-              <tr><td>1 Client (<code>--tpu-host-emb</code>)</td><td class="td-mono">114.8 ms (62.6 ms T2)</td><td class="td-mono">248.3 tok/s</td></tr>
-              <tr><td>16 Clients (<code>--tpu-batch 16</code>, Full Sampler)</td><td class="td-mono">426.1 ms avg</td><td class="td-mono">661.0 tok/s</td></tr>
-              <tr><td>32 Clients (<code>--tpu-batch 32 --tpu-argmax</code>)</td><td class="td-mono">706.0 ms avg</td><td class="td-peak">2,006.3 tok/s</td></tr>
-              <tr class="highlight-row"><td><strong>64 Clients (<code>--tpu-batch 64 --tpu-argmax</code>)</strong></td><td class="td-mono">1,383 ms avg</td><td class="td-peak">2,198.5 tok/s</td></tr>
+              <tr><td>1 Client (<code>HostEmb</code>)</td><td class="td-mono">114.8 ms</td><td class="td-mono">248.3 tok/s</td></tr>
+              <tr><td>16 Clients (<code>Full Sampler</code>)</td><td class="td-mono">426.1 ms</td><td class="td-mono">661.0 tok/s</td></tr>
+              <tr><td>32 Clients (<code>Argmax</code>)</td><td class="td-mono">706.0 ms</td><td class="td-peak">2,006.3 tok/s</td></tr>
+              <tr class="highlight-row"><td><strong>64 Clients (<code>Argmax</code>)</strong></td><td class="td-mono">1,383 ms</td><td class="td-peak">2,198.5 tok/s</td></tr>
             </tbody>
           </table>
         </div>
@@ -423,14 +426,15 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
       <div class="card">
         <span class="card-tag">Pure C++20 StableHLO MXU Compute</span>
         <h3>2.865 PFLOPS Sustained BF16 GEMM</h3>
-        <p style="margin-bottom:8px">Portable StableHLO <code>dot_general</code> executables compiled directly in C++20 and dispatched concurrently across all 4 Trillium TensorCores:</p>
+        <p style="margin-bottom:8px">Portable StableHLO <code>dot_general</code> executables compiled directly in C++20 and dispatched concurrently across 1 to 4 Trillium TensorCores (exact checksum verified):</p>
         <div class="table-wrap" style="margin-bottom:0">
           <table>
-            <thead><tr><th>Matrix Shape</th><th>Latency</th><th>Sustained (4 Chips)</th></tr></thead>
+            <thead><tr><th>Matrix Shape</th><th>Latency</th><th>Sustained Compute</th></tr></thead>
             <tbody>
-              <tr><td class="td-mono">4096 × 4096</td><td class="td-mono">0.44 ms</td><td class="td-mono">1,241.28 TFLOPS</td></tr>
-              <tr><td class="td-mono">8192 × 8192</td><td class="td-mono">1.70 ms</td><td class="td-mono">2,585.77 TFLOPS</td></tr>
-              <tr class="highlight-row"><td class="td-peak">16384 × 16384</td><td class="td-peak">12.28 ms</td><td class="td-peak">2,864.69 TFLOPS</td></tr>
+              <tr><td class="td-mono">4096 × 4096 (4 Chips)</td><td class="td-mono">0.44 ms</td><td class="td-mono">1,241.28 TFLOPS</td></tr>
+              <tr><td class="td-mono">8192 × 8192 (4 Chips)</td><td class="td-mono">1.70 ms</td><td class="td-mono">2,585.77 TFLOPS</td></tr>
+              <tr><td class="td-mono">16384 × 16384 (1 Chip)</td><td class="td-mono">12.00 ms</td><td class="td-mono">732.98 TFLOPS</td></tr>
+              <tr class="highlight-row"><td class="td-peak">16384 × 16384 (4 Chips)</td><td class="td-peak">12.28 ms</td><td class="td-peak">2,864.69 TFLOPS</td></tr>
             </tbody>
           </table>
         </div>
@@ -450,7 +454,7 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
       <div class="card">
         <span class="card-tag">Model-General Compiler</span>
         <h3>Multi-Architecture StableHLO Engine</h3>
-        <p>Compiles dense transformers directly from <code>ModelConfig</code> + GGUF tensors (<strong>Gemma 4/3/2, Llama 3/4, Qwen 2.5/3, Mistral, Phi-3/4, Ava 26B</strong>) into persistent HBM3 executables — CI-verified across 160 multi-arch graphs on Linux GCC &amp; Windows MSVC.</p>
+        <p>Compiles dense and sparse MoE transformers directly from <code>ModelConfig</code> + GGUF tensors (<strong>Gemma 4/3/2, Llama 3/4, Qwen 2.5/3, Mistral, Phi-3/4, Ava 26B-A4B MoE</strong>) into persistent HBM3 executables — CI-verified across 260 multi-arch graphs on Linux GCC &amp; Windows MSVC.</p>
       </div>
       <div class="card">
         <span class="card-tag">Multi-Tenant Continuous Batching</span>
