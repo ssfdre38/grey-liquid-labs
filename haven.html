@@ -201,8 +201,8 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
     <a href="#licensing" class="btn-secondary">Commercial Licensing →</a>
   </div>
   <div class="hero-stats">
-    <div class="stat-box accent"><span class="stat-num">9,180 tok/s</span><span class="stat-label">Continuous Batch (B=128)</span></div>
-    <div class="stat-box"><span class="stat-num cyan">2,198 tok/s</span><span class="stat-label">64-Client Live HTTP/SSE</span></div>
+    <div class="stat-box accent"><span class="stat-num">9,871 tok/s</span><span class="stat-label">Ava 26B MoE Batch (B=256)</span></div>
+    <div class="stat-box"><span class="stat-num cyan">3,711 tok/s</span><span class="stat-label">128-Client Live HTTP/SSE</span></div>
     <div class="stat-box"><span class="stat-num">30,181 tok/s</span><span class="stat-label">MXU Prefill (4.24 ms)</span></div>
     <div class="stat-box"><span class="stat-num cyan">2.865 PFLOPS</span><span class="stat-label">4-Chip BF16 MXU</span></div>
     <div class="stat-box"><span class="stat-num">0 Python</span><span class="stat-label">Standalone C++20 Binary</span></div>
@@ -380,9 +380,9 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
     <div class="feature-box" style="margin-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px">
         <div style="flex:1;min-width:280px">
-          <span class="card-tag">Native 26.3B Mixture-of-Experts · 128 Experts / Top-8</span>
-          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:4px">Ava 26B-A4B MoE on 4-Chip TPU v6e-4 — 7,805.8 tok/s Batch · 2,872.9 tok/s Live SSE</h3>
-          <p style="font-size:0.88rem;color:var(--text-muted)">Real <code>ava-26b-turbo-iq4xs-v2.gguf</code> compiled natively from C++20 with coalesced 3D HBM3 KV caches, 4-sink SWA ring buffers, hybrid hardware <code>W8A8</code> Gate+Up + fused <code>W8A16</code> Down MoE MXU kernels, zero-copy 1-slot KV isolation, and single-shot padded prefill — <strong>8.80 ms 107-token TTFT &amp; 1.89×–2.47× faster interactive decode than Ava's prior 8-chip JAX run on half the chips</strong>.</p>
+          <span class="card-tag">Native 26.3B Mixture-of-Experts · 128 Experts / Top-8 · Lossless BF16 KV</span>
+          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:4px">Ava 26B-A4B MoE on 4-Chip TPU v6e-4 — 9,871.4 tok/s Batch (B=256) · 3,711.1 tok/s Live SSE</h3>
+          <p style="font-size:0.88rem;color:var(--text-muted)">Real <code>ava-26b-turbo-iq4xs-v2.gguf</code> compiled natively from C++20 with <strong>Block-256 Orthogonal Walsh-Hadamard MoE pre-rotation</strong> (crushing 662× activation spikes to 5.8×), coalesced 3D HBM3 BF16 KV caches, exact sink-free power-of-2 SWA rings (<code>T_swa=1024</code>), fused Shared-FFN <code>Gate+Up</code>, hybrid hardware <code>W8A8</code> Gate+Up + fused <code>W8A16</code> Down MoE MXU kernels, zero-copy 1-slot KV isolation, and single-shot padded prefill — <strong>8.63 ms 107-token TTFT, B=256 lossless BF16 KV beating 4B Gemma 4 E4B, and 3,711.1 tok/s live 128-client SSE</strong>.</p>
         </div>
         <span class="badge-green">0.9983 BF16 / 0.9978 INT8 Parity</span>
       </div>
@@ -390,19 +390,19 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
         <table>
           <thead><tr><th>Ava 26B-A4B Mode (v6e-4)</th><th>HBM3 Weights</th><th>Parity vs CPU</th><th>S=128 Prefill</th><th>Step / TTFT</th><th>Throughput</th></tr></thead>
           <tbody>
-            <tr><td><strong>Interactive B=1 BF16</strong></td><td class="td-mono">47.12 GB</td><td><code>0.9983</code> / Exact</td><td class="td-mono">14.38 ms (8,903/s)</td><td class="td-mono">5.43 ms (14.30 ms TTFT)</td><td class="td-mono">184.3 tok/s</td></tr>
-            <tr><td><strong>Interactive B=1 INT8</strong></td><td class="td-mono">23.65 GB (5.9/chip)</td><td><code>0.9978</code> / Exact</td><td class="td-peak">8.86 ms (14,442/s)</td><td class="td-peak">4.30 ms (8.80 ms TTFT)</td><td class="td-peak">232.6 tok/s</td></tr>
-            <tr><td><strong>Live HTTP/SSE</strong> (B=1 Sampler)</td><td class="td-mono">23.65 GB</td><td><span class="badge-green">6/6 Async Slots</span></td><td style="color:var(--text-dim)">—</td><td class="td-peak">12.66 ms HTTP TTFT</td><td class="td-mono">192.4 tok/s</td></tr>
-            <tr><td><strong>Continuous Batch B=32 / B=64</strong></td><td class="td-mono">23.65 GB</td><td><span class="badge-green">Hybrid W8A8/W8A16</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">9.99 / 12.49 ms</td><td class="td-peak">3,203 / 5,124/s</td></tr>
-            <tr><td><strong>Continuous Batch B=128 (BF16)</strong></td><td class="td-mono">47.12 GB</td><td><span class="badge-green">Pure BF16</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">21.83 ms/step</td><td class="td-peak">5,863.2 tok/s</td></tr>
-            <tr class="highlight-row"><td><strong>Continuous Batch B=128 (INT8)</strong></td><td class="td-peak">23.65 GB</td><td><span class="badge-green">80% HBM3 BW</span></td><td style="color:var(--text-dim)">—</td><td class="td-peak">16.40 ms (61.0/usr)</td><td class="td-peak">7,805.8 tok/s</td></tr>
-            <tr class="highlight-row"><td><strong>Live Multi-Tenant SSE (16 / 64)</strong></td><td class="td-peak">23.65 GB</td><td><span class="badge-green">Zero-Copy 1-Slot</span></td><td style="color:var(--text-dim)">—</td><td class="td-peak">197 / 473 ms TTFT</td><td class="td-peak">676.6 / 2,872.9/s</td></tr>
+            <tr><td><strong>Interactive B=1 BF16</strong></td><td class="td-mono">47.12 GB</td><td><code>0.9983</code> / Exact</td><td class="td-mono">14.23 ms (8,994/s)</td><td class="td-mono">5.43 ms (14.11 ms TTFT)</td><td class="td-mono">184.3 tok/s</td></tr>
+            <tr><td><strong>Interactive B=1 INT8</strong></td><td class="td-mono">23.65 GB (5.9/chip)</td><td><code>0.9967–0.9978</code></td><td class="td-peak">8.63 ms (14,827/s)</td><td class="td-peak">4.30 ms (8.63 ms TTFT)</td><td class="td-peak">232.6 tok/s</td></tr>
+            <tr><td><strong>Live HTTP/SSE</strong> (B=1 Sampler)</td><td class="td-mono">23.65 GB</td><td><span class="badge-green">6/6 Async Slots</span></td><td style="color:var(--text-dim)">—</td><td class="td-peak">12.51 ms HTTP TTFT</td><td class="td-mono">192.4 tok/s</td></tr>
+            <tr><td><strong>Continuous Batch B=32 / B=64</strong></td><td class="td-mono">23.65 GB</td><td><span class="badge-green">Hadamard W8A8</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">9.51 / 11.47 ms</td><td class="td-peak">3,365 / 5,580/s</td></tr>
+            <tr><td><strong>Continuous Batch B=128 (BF16 / INT8)</strong></td><td class="td-mono">47.1 / 23.7 GB</td><td><span class="badge-green">Pow2 SWA Ring</span></td><td style="color:var(--text-dim)">—</td><td class="td-mono">21.09 / 15.66 ms</td><td class="td-peak">6,069 / 8,173/s</td></tr>
+            <tr class="highlight-row"><td><strong>Continuous Batch B=256 (INT8)</strong></td><td class="td-peak">23.65 GB</td><td><span class="badge-green">Lossless BF16 KV</span></td><td style="color:var(--text-dim)">—</td><td class="td-peak">25.93 ms (38.6/usr)</td><td class="td-peak">9,871.4 tok/s</td></tr>
+            <tr class="highlight-row"><td><strong>Live Multi-Tenant SSE (16 / 64 / 128)</strong></td><td class="td-peak">23.65 GB</td><td><span class="badge-green">Zero-Copy 1-Slot</span></td><td style="color:var(--text-dim)">—</td><td class="td-peak">201 / 467 / 880 ms</td><td class="td-peak">701 / 3,050 / 3,711/s</td></tr>
           </tbody>
         </table>
       </div>
       <div class="silicon-quote" style="margin-top:0">
-        <p>"It feels like absolute, unbridled precision. When you strip away the abstraction and run directly on the silicon, the latency vanishes."</p>
-        <cite>— Live Ava 26B-A4B MoE output captured directly from 4-Chip TPU v6e-4 Trillium silicon (Cosine Parity 0.997842 INT8 / 0.9983 BF16 vs F32 CPU)</cite>
+        <p>"It feels like absolute, unbridled precision. When you strip away the abstraction and let the logic flow directly through the silicon, the latency vanishes."</p>
+        <cite>— Live Ava 26B-A4B MoE output captured directly from 4-Chip TPU v6e-4 Trillium silicon (Cosine Parity 0.9967–0.9978 INT8 / 0.9983 BF16 vs F32 CPU)</cite>
       </div>
     </div>
 
@@ -456,12 +456,12 @@ tr.highlight-row td{background:rgba(16,185,129,0.06)}
       <div class="card">
         <span class="card-tag">Model-General Compiler</span>
         <h3>Multi-Architecture StableHLO Engine</h3>
-        <p>Compiles dense and sparse MoE transformers directly from <code>ModelConfig</code> + GGUF tensors (<strong>Gemma 4/3/2, Llama 3/4, Qwen 2.5/3, Mistral, Phi-3/4, Ava 26B-A4B MoE</strong>) into persistent HBM3 executables — CI-verified across 260 multi-arch graphs on Linux GCC &amp; Windows MSVC.</p>
+        <p>Compiles dense and sparse MoE transformers directly from <code>ModelConfig</code> + GGUF tensors (<strong>Gemma 4/3/2, Llama 3/4, Qwen 2.5/3, Mistral, Phi-3/4, Ava 26B-A4B MoE</strong>) into persistent HBM3 executables — CI-verified across 585 multi-arch graphs on Linux GCC &amp; Windows MSVC.</p>
       </div>
       <div class="card">
         <span class="card-tag">Multi-Tenant Continuous Batching</span>
         <h3>Async Per-Slot <code>pos_vec[B]</code> &amp; Scheduler</h3>
-        <p>Lock-free <code>TpuContinuousBatchScheduler</code> multiplexes up to 128 concurrent HTTP/SSE clients into shared HBM3 KV slots with in-place <code>stablehlo.scatter</code> decode and slot-targeted <code>S=128/32/16/8/1</code> prefill — verified 6/6 zero cross-slot leakage on <code>v6e-4</code>.</p>
+        <p>Lock-free <code>TpuContinuousBatchScheduler</code> multiplexes up to 256 concurrent HTTP/SSE clients into shared HBM3 KV slots with in-place <code>stablehlo.scatter</code> decode and zero-copy 1-slot prefill — verified 6/6 zero cross-slot leakage on <code>v6e-4</code>.</p>
       </div>
       <div class="card">
         <span class="card-tag">Zero-Pad HBM3</span>
